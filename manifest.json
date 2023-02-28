@@ -1,0 +1,34 @@
+{
+    "name": "__MSG_extName__",
+    "description": "__MSG_extDescription__",
+    "version": "1.0.0",
+    "manifest_version": 3,
+    "default_locale": "en",
+    "action": {
+        "default_popup": "src/popup/index.html",
+        "default_title": "__MSG_extName__"
+    },
+    "host_permissions": [
+        "https://www.twitch.tv/"
+    ],
+    "permissions": [
+        "storage", 
+        "cookies"
+    ],
+    "background": {
+        "service_worker": "src/background/index.ts"
+    },
+    "options_ui": {
+        "page": "src/options/options.html",
+        "open_in_tab": false
+    },
+    "content_scripts": [
+        {
+            "matches": ["https://www.twitch.tv/*"],
+            "js": ["src/content/index.ts"],
+            "all_frames": true,
+            "run_at": "document_start"
+        }
+      ]
+}
+  
