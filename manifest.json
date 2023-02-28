@@ -13,22 +13,16 @@
     ],
     "permissions": [
         "storage", 
-        "cookies"
+        "cookies",
+        "scripting"
     ],
     "background": {
         "service_worker": "src/background/index.ts"
     },
     "options_ui": {
-        "page": "src/options/options.html",
+        "page": "src/options/index.html",
         "open_in_tab": false
-    },
-    "content_scripts": [
-        {
-            "matches": ["https://www.twitch.tv/*"],
-            "js": ["src/content/index.ts"],
-            "all_frames": true,
-            "run_at": "document_start"
-        }
-      ]
+    }
+
 }
   
