@@ -1,3 +1,10 @@
-import chatClient from './ChatClient';
+import { chatClient } from './ChatClient';
 
-console.log(chatClient);
+
+chatClient.on('send', (message) => {
+    console.log(Date.now(), message.tags.get('client-nonce'));
+});
+
+chatClient.on('receive', (message) => {
+    message.command === 'USERSTATE' && console.log(Date.now(), message.tags.get('client-nonce'));
+});

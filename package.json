@@ -24,6 +24,10 @@
     "vite": "^4.1.0"
   },
   "dependencies": {
-    "daisyui": "^2.51.2"
+    "@twurple/auth": "^6.0.5",
+    "@twurple/chat": "^6.0.5",
+    "daisyui": "^2.51.2",
+    "ircv3": "^0.31.5",
+    "nanoevents": "^7.0.1"
   }
 }
