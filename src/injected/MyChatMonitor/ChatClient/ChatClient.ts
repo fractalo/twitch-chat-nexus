@@ -1,4 +1,4 @@
-import { createNanoEvents, Emitter } from "nanoevents"
+import { createNanoEvents, type Emitter } from "nanoevents"
 import type { Message } from "ircv3/lib";
 import { parseMessage } from "./parseMessage";
 import { isChatWebSocketUrl } from "./isChatWebSocketUrl";
@@ -7,6 +7,9 @@ import { isChatWebSocketUrl } from "./isChatWebSocketUrl";
 interface Events {
     send: (message: Message<any>) => void;
     receive: (message: Message<any>) => void;
+    create: () => void;
+    ping: () => void;
+    open: () => void;
 }
 
 class ChatClient {
@@ -36,13 +39,32 @@ class ChatClient {
         return this.emitter.on(event, callback);
     }
 
+    isOpened() {
+        return this.webSocket?.readyState === WebSocket.OPEN;
+    }
+
+    sendPing(sendWithUUID = false) {
+        if (!this.isOpened()) return;
+
+        if (sendWithUUID) {
+            this.webSocket?.send(`PING :${crypto?.randomUUID()}`);
+        } else {
+            this.webSocket?.send('PING');
+        }
+    }
+
     private setWebSocket(webSocket: WebSocket) {
+        this.emitter.emit('create');
         const nativeSend = webSocket.send.bind(webSocket);
         const send = (data: string | ArrayBufferLike | Blob | ArrayBufferView) => {
             nativeSend(data);
 
             const message = parseMessage((data as Buffer).toString());
-            message && this.emitter.emit('send', message);
+            if (message) {
+                this.emitter.emit('send', message);
+            } else if (data === 'PING') { // native ping
+                this.emitter.emit('ping');
+            }
         };
         webSocket.send = send.bind(webSocket);
 
@@ -63,16 +85,19 @@ class ChatClient {
             }
         }
 
-        const errorListener = () => {};
+        const openListener = () => {
+            this.emitter.emit('open');
+        };
 
         const closeListener = () => {
+            webSocket.send = nativeSend;
             webSocket.removeEventListener('message', messageListener);
-            webSocket.removeEventListener('error', errorListener);
+            webSocket.removeEventListener('open', openListener);
             webSocket.removeEventListener('close', closeListener);
         }
 
         webSocket.addEventListener('message', messageListener);
-        webSocket.addEventListener('error', errorListener);
+        webSocket.addEventListener('open', openListener);
         webSocket.addEventListener('close', closeListener);
 
 

@@ -4,8 +4,10 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "dev": "cross-env BUILD_TYPE=main vite",
+    "build:main": "cross-env BUILD_TYPE=main vite build",
+    "build:injectedScript": "cross-env BUILD_TYPE=injectedScript vite build",
+    "build": "npm run build:main && npm run build:injectedScript",
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json"
   },
@@ -15,13 +17,14 @@
     "@tsconfig/svelte": "^3.0.0",
     "@types/chrome": "^0.0.218",
     "autoprefixer": "^10.4.13",
+    "cross-env": "^7.0.3",
     "postcss": "^8.4.21",
     "svelte": "^3.55.1",
     "svelte-check": "^2.10.3",
     "tailwindcss": "^3.2.7",
     "tslib": "^2.5.0",
     "typescript": "^4.9.3",
-    "vite": "^4.1.0"
+    "vite": "^4.1.4"
   },
   "dependencies": {
     "@twurple/auth": "^6.0.5",
