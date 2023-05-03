@@ -1,3 +1,26 @@
+@import 'pretendard/dist/web/variable/pretendardvariable';
+@import 'simplebar/dist/simplebar.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'Pretendard Variable', 
+    -apple-system, 
+    BlinkMacSystemFont, 
+    system-ui, 
+    Roboto, 
+    'Helvetica Neue', 
+    'Segoe UI', 
+    'Apple SD Gothic Neo', 
+    'Noto Sans KR', 
+    'Malgun Gothic', 
+    sans-serif;
+  }
+}
+
+.simplebar-scrollbar::before {
+  background-color: #a0a0a6;
+}
