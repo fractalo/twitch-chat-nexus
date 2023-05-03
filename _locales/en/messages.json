@@ -1,8 +1,143 @@
 {
     "extName": {
-        "message": "My Twitch Chat"
+        "message": "Twitch Chat History"
     },
     "extDescription": {
-        "message": "View your Twitch chat history."
+        "message": "Allows you to view your Twitch chat history"
+    },
+
+    "help": {
+        "message": "Help"
+    },
+
+    "settings": {
+        "message": "Settings"
+    },
+
+    "settings_chatLogView": {
+        "message": "Chat History"
+    },
+    "settings_chatLogView_openingButton": {
+        "message": "Chat History Button"
+    },
+    "settings_chatLogView_openingButton_location": {
+        "message": "Location"
+    },
+    "settings_chatLogView_openingButton_location_bottomOfChatWindow": {
+        "message": "Bottom of Chat Window"
+    },
+    "settings_chatLogView_openingButton_location_chatSettingsMenu": {
+        "message": "Chat Settings Menu"
+    },
+    "settings_chatLogView_openingButton_windowType": {
+        "message": "Window Type"
+    },
+    "settings_chatLogView_openingButton_windowType_popup": {
+        "message": "Popup"
+    },
+    "settings_chatLogView_openingButton_windowType_tab": {
+        "message": "Tab"
+    },
+    "settings_chatLogView_openingButton_alwaysNewWindow": {
+        "message": "Always open in new window"
+    },
+    "settings_chatIndicator": {
+        "message": "Chat Sending Status"
+    },
+    "settings_chatIndicator_appearance": {
+        "message": "Appearance"
+    },
+    "settings_chatIndicator_appearance_thickness": {
+        "message": "Thickness"
+    },
+    "settings_chatIndicator_appearance_thickness_light": {
+        "message": "Light"
+    },
+    "settings_chatIndicator_appearance_thickness_normal": {
+        "message": "Normal"
+    },
+    "settings_chatIndicator_appearance_thickness_bold": {
+        "message": "Bold"
+    },
+    "settings_chatIndicator_appearance_width": {
+        "message": "Width"
+    },
+    "settings_chatIndicator_behavior": {
+        "message": "Behavior"
+    },
+    "settings_chatIndicator_behavior_showWaiting": {
+        "message": "Show response waiting (gray)"
+    },
+    "settings_chatIndicator_behavior_showSuccess": {
+        "message": "Show transfer success (green)"
+    },
+    "settings_chatIndicator_behavior_showTimeout": {
+        "message": "Show response timeout (orange)"
+    },
+    "settings_chatIndicator_behavior_hideAfter": {
+        "message": "Hide After"
+    },
+    "settings_chatIndicator_behavior_hideAfter_1000": {
+        "message": "1 seconds"
+    },
+    "settings_chatIndicator_behavior_hideAfter_2000": {
+        "message": "2 seconds"
+    },
+    "settings_chatIndicator_behavior_hideAfter_3000": {
+        "message": "3 seconds"
+    },
+    "settings_chatIndicator_behavior_hideAfter_5000": {
+        "message": "5 seconds"
+    },
+
+
+    "chatLogView_openingButton": {
+        "message": "View Chat History"
+    },
+    "chatLogView_openingButton_label": {
+        "message": "Chat History"
+    },
+    
+    "chatLogView_refresh_button": {
+        "message": "Refresh"
+    },
+    "chatLogView_settings_button": {
+        "message": "Chat History Settings"
+    },
+    "chatLogView_first_button": {
+        "message": "First"
+    },
+    "chatLogView_previous_button": {
+        "message": "Previous"
+    },
+    "chatLogView_next_button": {
+        "message": "Next"
+    },
+    "chatLogView_last_button": {
+        "message": "Last"
+    },
+    "chatLogView_first_button_label": {
+        "message": "First Page"
+    },
+    "chatLogView_previous_button_label": {
+        "message": "Previous Page"
+    },
+    "chatLogView_next_button_label": {
+        "message": "Next Page"
+    },
+    "chatLogView_last_button_label": {
+        "message": "Last Page"
+    },
+    "chatLogView_pagination_toggle": {
+        "message": "Use Pagination"
+    },
+    "chatLogView_pageSize": {
+        "message": "Page Size"
+    },
+    "chatLogView_pageSize_postfix": {
+        "message": " items"
+    },
+    "chatLogView_chatUsername_toggle": {
+        "message": "Hide Username"
     }
 }
