@@ -1,4 +1,4 @@
-import { createNanoEvents, type Emitter } from "nanoevents"
+import { createNanoEvents, type Emitter } from "nanoevents";
 import type { Message } from "ircv3/lib";
 import { parseMessage } from "./parseMessage";
 import { isChatWebSocketUrl } from "./isChatWebSocketUrl";
@@ -62,7 +62,7 @@ class ChatClient {
             const message = parseMessage((data as Buffer).toString());
             if (message) {
                 this.emitter.emit('send', message);
-            } else if (data === 'PING') { // native ping
+            } else if (data === 'PING') { // parser cannot parse native ping.
                 this.emitter.emit('ping');
             }
         };
@@ -105,6 +105,11 @@ class ChatClient {
     }
 }
 
-const chatClient = new ChatClient();
+let chatClient: ChatClient | undefined;
 
-export { chatClient };
+export const getChatClient = () => {
+    if (!chatClient) {
+        chatClient = new ChatClient();
+    }
+    return chatClient;
+}

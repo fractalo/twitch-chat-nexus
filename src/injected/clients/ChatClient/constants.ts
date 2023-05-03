@@ -1,0 +1,1 @@
+export const IRC_HOST = "irc-ws.chat.twitch.tv";

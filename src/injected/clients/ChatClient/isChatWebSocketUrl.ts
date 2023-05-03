@@ -1,5 +1,4 @@
-const IRC_HOST = "irc-ws.chat.twitch.tv";
-
+import { IRC_HOST } from "./constants";
 
 export const isChatWebSocketUrl = (url: string | URL) => {
     try {
