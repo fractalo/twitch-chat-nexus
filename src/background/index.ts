@@ -1,16 +1,20 @@
+
 chrome.scripting.registerContentScripts([
     {
-        id: "mtc_injectedScript",
+        id: "tch_injected",
         js: ['injected.js'],
-        matches: ["https://www.twitch.tv/*"],
+        matches: ["*://*.twitch.tv/*"],
         runAt: "document_start",
         allFrames: true,
         world: "MAIN",
-    },
+    }
 ]);
 
 
-chrome.runtime.onInstalled.addListener(() => {
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (sender.id !== chrome.runtime.id) {
+        return;
+    }
     
 });
 
