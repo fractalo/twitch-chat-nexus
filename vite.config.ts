@@ -1,6 +1,7 @@
 import { crx } from "@crxjs/vite-plugin";
 import { defineConfig, UserConfig } from 'vite'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
+import plainText from 'vite-plugin-plain-text';
 import { resolve } from "path";
 import manifest from "./manifest.json";
 
@@ -19,6 +20,10 @@ const userConfigs: Record<string, UserConfig> = {
             svelte({
                 emitCss: false
             }), 
+            plainText(
+                ['**/*.gql'],
+                { namedExport: false }
+            ),
         ],
         build: {
             rollupOptions: {
