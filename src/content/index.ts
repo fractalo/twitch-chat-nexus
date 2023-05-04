@@ -57,7 +57,7 @@ chrome.runtime.onMessage.addListener((message, sender) => {
     }
 });
 
-chrome.storage.sync.onChanged.addListener((changes) => {
+chrome.storage.local.onChanged.addListener((changes) => {
     const newSettingValues = changes.settings?.newValue as MainCategorySettingValues | undefined;
     if (!newSettingValues) return;
 

@@ -92,7 +92,7 @@ export const getSettingsI18nMessage = (path: string[]) => {
 };
 
 export const getSettingValues = async() => {
-    const items = await chrome.storage.sync.get("settings");
+    const items = await chrome.storage.local.get("settings");
     const storedSettingValues: MainCategorySettingValues = items.settings || {};
 
     const settingValues: MainCategorySettingValues = {};

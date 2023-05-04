@@ -15,7 +15,7 @@
   let currentMenu = Object.keys(settingDefinitions)[0];
 
   const handleChange = () => {
-    chrome.storage.sync.set({ settings: settingValues });
+    chrome.storage.local.set({ settings: settingValues });
   };
 
 </script>
