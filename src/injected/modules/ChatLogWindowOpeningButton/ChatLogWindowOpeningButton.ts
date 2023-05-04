@@ -30,7 +30,7 @@ const handleButtonClick = () => {
     } else {
         switch (config.windowType) {
             case 'popup': {
-                chatLogWindow = window.open(chatLogViewUrl, '_blank', 'popup, width=510, height=720, top=50');
+                chatLogWindow = window.open(chatLogViewUrl, '_blank', 'popup, width=410, height=580, top=50');
                 break;
             }
             case 'tab': {
