@@ -66,13 +66,13 @@
         "message": "행동"
     },
     "settings_chatIndicator_behavior_showWaiting": {
-        "message": "응답 대기 중 표시 (회색)"
+        "message": "응답 대기 중 (회색)"
     },
     "settings_chatIndicator_behavior_showSuccess": {
-        "message": "전송 성공 표시 (초록색)"
+        "message": "전송 성공 (초록색)"
     },
     "settings_chatIndicator_behavior_showTimeout": {
-        "message": "응답 시간 초과 표시 (주황색)"
+        "message": "응답 시간 초과 (주황색)"
     },
     "settings_chatIndicator_behavior_hideAfter": {
         "message": "일정 시간 이후 숨기기"

@@ -66,13 +66,13 @@
         "message": "Behavior"
     },
     "settings_chatIndicator_behavior_showWaiting": {
-        "message": "Show response waiting (gray)"
+        "message": "Response waiting (gray)"
     },
     "settings_chatIndicator_behavior_showSuccess": {
-        "message": "Show transfer success (green)"
+        "message": "Transfer success (green)"
     },
     "settings_chatIndicator_behavior_showTimeout": {
-        "message": "Show response timeout (orange)"
+        "message": "Response timeout (orange)"
     },
     "settings_chatIndicator_behavior_hideAfter": {
         "message": "Hide After"
