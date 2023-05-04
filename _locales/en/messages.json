@@ -69,7 +69,7 @@
         "message": "Response waiting (gray)"
     },
     "settings_chatIndicator_behavior_showSuccess": {
-        "message": "Transfer success (green)"
+        "message": "Sending success (green)"
     },
     "settings_chatIndicator_behavior_showTimeout": {
         "message": "Response timeout (orange)"
