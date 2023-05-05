@@ -40,14 +40,12 @@ export const settingDefinitions: MainCategorySettings = {
                 default: true
             },
             hideAfter: {
-                type: 'select',
-                default: "3000",
-                options: [
-                    "1000",
-                    "2000",
-                    "3000",
-                    "5000"
-                ]
+                type: 'range',
+                default: 3000,
+                min: 500,
+                max: 5000,
+                step: 100,
+                unit: 'ms'
             }
         },
         appearance: {

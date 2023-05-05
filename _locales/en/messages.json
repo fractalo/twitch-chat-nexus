@@ -77,18 +77,6 @@
     "settings_chatIndicator_behavior_hideAfter": {
         "message": "Hide After"
     },
-    "settings_chatIndicator_behavior_hideAfter_1000": {
-        "message": "1 seconds"
-    },
-    "settings_chatIndicator_behavior_hideAfter_2000": {
-        "message": "2 seconds"
-    },
-    "settings_chatIndicator_behavior_hideAfter_3000": {
-        "message": "3 seconds"
-    },
-    "settings_chatIndicator_behavior_hideAfter_5000": {
-        "message": "5 seconds"
-    },
 
 
     "chatLogView_openingButton": {

@@ -46,7 +46,7 @@
 
     const setConfig = (settings: SubCategorySettingValues) => {
         config = {
-            hideAfter: parseInt(settings.behavior.hideAfter as string),
+            hideAfter: settings.behavior.hideAfter as number,
             showState: {
                 success: settings.behavior.showSuccess as boolean,
                 timeout: settings.behavior.showTimeout as boolean,
