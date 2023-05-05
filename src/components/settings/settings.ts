@@ -1,26 +1,10 @@
-interface ToggleSetting {
-    default: boolean;
-}
-
-interface SelectSetting {
-    default: string;
-    options: string[];
-}
-
-type Setting = ToggleSetting | SelectSetting;
-type Settings = Record<string, Setting>;
-type SubCategorySettings = Record<string, Settings>;
-export type MainCategorySettings = Record<string, SubCategorySettings>;
-
-export type SettingValue = boolean | string;
-export type SettingValues = Record<string, SettingValue>;
-export type SubCategorySettingValues = Record<string, SettingValues>;
-export type MainCategorySettingValues = Record<string, SubCategorySettingValues>;
+import type { MainCategorySettingValues, MainCategorySettings, Setting, SettingValue } from "./types";
 
 export const settingDefinitions: MainCategorySettings = {
     chatLogView: {
         openingButton: {
             location: {
+                type: 'select',
                 default: "bottomOfChatWindow",
                 options: [
                     "bottomOfChatWindow",
@@ -28,6 +12,7 @@ export const settingDefinitions: MainCategorySettings = {
                 ]
             },
             windowType: {
+                type: 'select',
                 default: "popup",
                 options: [
                     "popup",
@@ -35,6 +20,7 @@ export const settingDefinitions: MainCategorySettings = {
                 ]
             },
             alwaysNewWindow: {
+                type: 'toggle',
                 default: false
             }
         }
@@ -42,15 +28,19 @@ export const settingDefinitions: MainCategorySettings = {
     chatIndicator: {
         behavior: {
             showWaiting: {
+                type: 'toggle',
                 default: true
             },
             showSuccess: {
+                type: 'toggle',
                 default: true
             },
             showTimeout: {
+                type: 'toggle',
                 default: true
             },
             hideAfter: {
+                type: 'select',
                 default: "3000",
                 options: [
                     "1000",
@@ -62,6 +52,7 @@ export const settingDefinitions: MainCategorySettings = {
         },
         appearance: {
             thickness: {
+                type: 'select',
                 default: "normal",
                 options: [
                     "light",
@@ -70,6 +61,7 @@ export const settingDefinitions: MainCategorySettings = {
                 ]
             },
             width: {
+                type: 'select',
                 default: "100%",
                 options: [
                     "10%",
@@ -85,11 +77,36 @@ export const settingDefinitions: MainCategorySettings = {
 };
 
 
-
-
 export const getSettingsI18nMessage = (path: string[]) => {
     return chrome.i18n.getMessage(['settings', ...path].join('_'));
 };
+
+const isSettingValueValid = (settingValue: SettingValue, setting: Setting) => {
+    switch (setting.type) {
+        case 'toggle': {
+            if (typeof settingValue === 'boolean') {
+                return true;
+            }
+            break;
+        }
+        case 'select': {
+            if (typeof settingValue === 'string') {
+                return setting.options.includes(settingValue);
+            }
+            break;
+        }
+        case 'range': {
+            if (typeof settingValue === 'number') {
+                return settingValue >= setting.min && settingValue <= setting.max;
+            }
+            break;
+        }
+        default:
+    }
+
+    return false;
+};
+
 
 export const getSettingValues = async() => {
     const items = await chrome.storage.local.get("settings");
@@ -103,11 +120,7 @@ export const getSettingValues = async() => {
             settingValues[mainCategory][subCategory] = {};
             Object.entries(actualSettings).forEach(([name, setting]) => {
                 const storedSettingValue = storedSettingValues?.[mainCategory]?.[subCategory]?.[name];
-                if (
-                    storedSettingValue !== undefined &&
-                    typeof storedSettingValue === typeof setting.default &&
-                    (!('options' in setting) || setting.options.includes(storedSettingValue as string))
-                ) {
+                if (isSettingValueValid(storedSettingValue, setting)) {
                     settingValues[mainCategory][subCategory][name] = storedSettingValue;
                 } else {
                     settingValues[mainCategory][subCategory][name] = setting.default;

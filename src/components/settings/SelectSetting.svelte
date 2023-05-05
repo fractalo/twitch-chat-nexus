@@ -1,6 +1,6 @@
 <script lang="ts">
     import { createEventDispatcher } from 'svelte';
-    import type { SettingValue } from "./settings";
+    import type { SettingValue } from "./types";
 
     export let id: string;
     export let value: SettingValue;
@@ -16,7 +16,7 @@
     </span>
 </label>
 {#if typeof value === 'string'}
-    <select id={id} class="select select-sm"
+    <select {id} class="select select-sm"
         bind:value={value}
         on:change={() => dispatch('change')}
     >

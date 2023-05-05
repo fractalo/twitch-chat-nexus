@@ -1,6 +1,6 @@
 <script lang="ts">
     import { createEventDispatcher } from 'svelte';
-    import type { SettingValue } from "./settings";
+    import type { SettingValue } from "./types";
 
     export let value: SettingValue;
     export let settingName: string;

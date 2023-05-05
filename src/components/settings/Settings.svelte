@@ -4,9 +4,10 @@
   import {
     settingDefinitions,
     getSettingsI18nMessage,
-    getSettingValues,
-    type MainCategorySettingValues,
+    getSettingValues
   } from "./settings";
+  import type { MainCategorySettingValues } from "./types";
+  import RangeSetting from "./RangeSetting.svelte";
 
   let settingValues: MainCategorySettingValues | null = null;
 
@@ -44,7 +45,7 @@
             <div class="card bg-base-200 rounded-box place-items-center p-3 gap-1">
               {#each Object.entries(settingDefinitions[currentMenu][category]) as [id, setting] (id)}
                 <div class="form-control w-full max-w-xs">
-                  {#if typeof setting.default === "string"}
+                  {#if setting.type === "select"}
                     <SelectSetting
                       bind:value={settingValues[currentMenu][category][id]}
                       on:change={handleChange}
@@ -53,7 +54,7 @@
                         category,
                         id,
                       ])}
-                      {id}
+                      id={[currentMenu, category, id].join('.')}
                       options={setting.options.map((option) => {
                         return {
                           id: option,
@@ -66,7 +67,7 @@
                         };
                       })}
                     />
-                  {:else}
+                  {:else if setting.type === 'toggle'}
                     <ToggleSetting
                       bind:value={settingValues[currentMenu][category][id]}
                       on:change={handleChange}
@@ -75,6 +76,21 @@
                         category,
                         id,
                       ])}
+                    />
+                  {:else if setting.type === 'range'}
+                    <RangeSetting
+                      bind:value={settingValues[currentMenu][category][id]}
+                      on:change={handleChange}
+                      settingName={getSettingsI18nMessage([
+                        currentMenu,
+                        category,
+                        id,
+                      ])}
+                      id={[currentMenu, category, id].join('.')}
+                      min={setting.min}
+                      max={setting.max}
+                      step={setting.step}
+                      unit={setting.unit}
                     />
                   {/if}
                 </div>
