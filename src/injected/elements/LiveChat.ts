@@ -39,6 +39,8 @@ class LiveChat {
                 // cleanup
                 this.stopListeningDOMUpdates();
                 this.disconnectObservers();
+                this.streamChatEl = null;
+                this.chatRoomContentEl = null;
             }
         };
 
