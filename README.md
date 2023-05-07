@@ -1,3 +1,3 @@
-# My Twitch Chat
+# Twitch Chat History
 
-자신의 트위치 채팅 내역을 볼 수 있게 해주는 확장프로그램
+Lets you to view your chat history on Twitch, or to display whether or not your chat was sent successfully.
