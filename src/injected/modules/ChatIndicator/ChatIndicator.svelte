@@ -69,15 +69,17 @@
 
 </script>
 
-{#if state !== 'idle' && config}
+{#if config}
+{#key state}
 <div in:fade={{duration: 150}} out:fade class="absolute w-full h-0 z-50 pointer-events-none">
     <div 
         class="
-            mx-auto mt-[0.3rem] rounded-full transition
+            mx-auto mt-[0.3rem] rounded-full
             {config.width}
             {config.height}
             {config.showState[state] ? config.colorTheme[state] || 'bg-transparent' : 'bg-transparent'}
         "
     ></div>
 </div>
+{/key}
 {/if}
