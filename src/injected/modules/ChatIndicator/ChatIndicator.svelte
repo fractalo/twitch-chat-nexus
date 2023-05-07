@@ -15,7 +15,7 @@
     
     let averageResponseTime = DEFAULT_RESPONSE_TIME;
 
-    const getTimeoutTime = () => Math.round(averageResponseTime * 2);
+    const getTimeoutTime = () => Math.round(averageResponseTime * 2.3);
 
     export const setState = (newState: ChatIndicatorState) => {
         state = newState;
