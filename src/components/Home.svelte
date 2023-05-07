@@ -24,7 +24,7 @@
     <div class="hero-content">
       <div class="tooltip tooltip-bottom" data-tip="{getI18nMessage("help")}">
         <button class="btn btn-primary btn-square btn-ghost normal-case"
-          on:click={() => createTab("https://github.com/fractalo/twitch-chat-history")}
+          on:click={() => createTab(`https://twitch-chat-history.gitbook.io/docs/v/${getI18nMessage("help_language")}`)}
         >
           <Fa class="text-2xl" icon={faCircleQuestion} />
         </button>

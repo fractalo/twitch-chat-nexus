@@ -9,6 +9,9 @@
     "help": {
         "message": "도움말"
     },
+    "help_language": {
+        "message": "korean"
+    },
 
     "settings": {
         "message": "설정"

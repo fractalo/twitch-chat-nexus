@@ -9,6 +9,9 @@
     "help": {
         "message": "Help"
     },
+    "help_language": {
+        "message": "english"
+    },
 
     "settings": {
         "message": "Settings"
