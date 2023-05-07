@@ -29,7 +29,7 @@ export const settingDefinitions: MainCategorySettings = {
         behavior: {
             showWaiting: {
                 type: 'toggle',
-                default: true
+                default: false
             },
             showSuccess: {
                 type: 'toggle',
