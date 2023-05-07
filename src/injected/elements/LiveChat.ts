@@ -60,10 +60,10 @@ class LiveChat {
     }
 
     private startListeningDOMUpdates() {
-        if (this.removeDOMListener) {
-            return;
+        if (!this.removeDOMListener) {
+            this.removeDOMListener = domObserver.on('update', () => this.handleDOMUpdate());
         }
-        this.removeDOMListener = domObserver.on('update', () => this.handleDOMUpdate());
+        
         clearTimeout(this.domListenerTimer);
         this.domListenerTimer = window.setTimeout(() => this.stopListeningDOMUpdates(), 60_000);
 
