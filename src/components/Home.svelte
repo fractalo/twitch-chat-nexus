@@ -2,7 +2,7 @@
   import logoSrc from 'src/assets/logo.png';
   import Fa from 'svelte-fa/src/fa.svelte';
   import { faGithub } from '@fortawesome/free-brands-svg-icons';
-  import { faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
+  import { faCircleQuestion, faStar } from '@fortawesome/free-solid-svg-icons';
 
   const manifest = chrome.runtime.getManifest();
 
@@ -35,6 +35,14 @@
           on:click={() => createTab("https://github.com/fractalo/twitch-chat-history")}
         >
           <Fa class="text-2xl" icon={faGithub} />
+        </button>
+      </div>
+
+      <div class="tooltip tooltip-bottom" data-tip="{getI18nMessage("rate")}">
+        <button class="btn btn-primary btn-square btn-ghost normal-case"
+          on:click={() => createTab(`https://chrome.google.com/webstore/detail/twitch-chat-history/oopcjaklhenijofoanbpchndknfadldn/reviews`)}
+        >
+          <Fa class="text-2xl" icon={faStar} />
         </button>
       </div>
     </div>

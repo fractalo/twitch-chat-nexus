@@ -13,6 +13,10 @@
         "message": "korean"
     },
 
+    "rate": {
+        "message": "평가하기"
+    },
+
     "settings": {
         "message": "설정"
     },
