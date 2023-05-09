@@ -5,7 +5,7 @@ import type { OpeningButtonConfig } from "./types";
 import ChatLogWindowOpeningButton from "./ChatLogWindowOpeningButton.svelte";
 import { waitForDOMReady } from "src/util/waitForDOMReady";
 import liveChat from "src/injected/elements/LiveChat";
-
+import { percentToDecimal } from "src/util/percentToDecimal";
 
 let config: OpeningButtonConfig | null = null;
 
@@ -14,6 +14,15 @@ let chatLogWindow: Window | null = null;
 let mutationObservers: MutationObserver[] = [];
 
 let removeLiveChatListener: ReturnType<typeof liveChat.on> | null = null;
+
+
+const POPUP_WIDTH = 410;
+const POPUP_HEIGHT = 580;
+
+const createWindowDimensionSize = (dimension: number, scaleFactor: number, minSize: number) => {
+    const size = Math.round(dimension * scaleFactor);
+    return size >= minSize ? size : minSize;
+};
 
 const handleButtonClick = () => {
     if (!config) return;
@@ -30,7 +39,9 @@ const handleButtonClick = () => {
     } else {
         switch (config.windowType) {
             case 'popup': {
-                chatLogWindow = window.open(chatLogViewUrl, '_blank', 'popup, width=410, height=580, top=50');
+                const width = createWindowDimensionSize(POPUP_WIDTH, config.popupSize, 100);
+                const height = createWindowDimensionSize(POPUP_HEIGHT, config.popupSize, 100);
+                chatLogWindow = window.open(chatLogViewUrl, '_blank', `popup, width=${width}, height=${height}, top=50`);
                 break;
             }
             case 'tab': {
@@ -121,6 +132,7 @@ export const updateConfig = (settings: MainCategorySettingValues) => {
         location: settings.chatLogView.openingButton.location as string,
         windowType: settings.chatLogView.openingButton.windowType as string,
         alwaysNewWindow: settings.chatLogView.openingButton.alwaysNewWindow as boolean,
+        popupSize: percentToDecimal(settings.chatLogView.openingButton.popupSize as string, 1.0) 
     };
 
     if (config.windowType !== prevConfig?.windowType) {

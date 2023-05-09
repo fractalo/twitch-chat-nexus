@@ -22,6 +22,21 @@ export const settingDefinitions: MainCategorySettings = {
             alwaysNewWindow: {
                 type: 'toggle',
                 default: false
+            },
+            popupSize: {
+                type: 'select',
+                default: "100%",
+                options: [
+                    "75%",
+                    "80%",
+                    "90%",
+                    "100%",
+                    "110%",
+                    "125%",
+                    "150%",
+                    "175%",
+                    "200%",
+                ]
             }
         }
     },

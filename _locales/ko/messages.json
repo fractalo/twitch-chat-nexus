@@ -48,6 +48,9 @@
     "settings_chatLogView_openingButton_alwaysNewWindow": {
         "message": "항상 새 창으로 열기"
     },
+    "settings_chatLogView_openingButton_popupSize": {
+        "message": "팝업 크기"
+    },
     "settings_chatIndicator": {
         "message": "채팅 전송 상태"
     },

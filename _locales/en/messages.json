@@ -48,6 +48,9 @@
     "settings_chatLogView_openingButton_alwaysNewWindow": {
         "message": "Always open in new window"
     },
+    "settings_chatLogView_openingButton_popupSize": {
+        "message": "Popup Size"
+    },
     "settings_chatIndicator": {
         "message": "Chat Sending Status"
     },
