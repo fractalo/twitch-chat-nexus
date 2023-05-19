@@ -1,9 +1,9 @@
 <script lang="ts">
     import { fade } from "svelte/transition";
-    import { getSettingsI18nMessage } from "./settings";
     import Home from "./Home.svelte";
     import Settings from "./settings/Settings.svelte";
     import type { SvelteComponent } from "svelte";
+    import { i18n } from 'src/i18n';
 
 
     let showSettings = false;
@@ -29,7 +29,7 @@
         <div class="navbar-start">
             {#if showSettings}
                 <div class="text-[1.375rem] font-semibold ml-2" in:fade={{ delay: 150, duration: 150 }} out:fade={{ duration: 150 }} >
-                    {getSettingsI18nMessage([])}
+                    {$i18n.t('settings', { ns: 'common' })}
                 </div>
             {/if}
         </div>

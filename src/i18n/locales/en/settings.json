@@ -1,0 +1,40 @@
+{
+    "chatLogView": {
+        "_self": "Chat History",
+        "openingButton": {
+            "_self": "Chat History Button",
+            "location": {
+                "_self": "Location",
+                "bottomOfChatWindow": "Bottom of Chat Window",
+                "chatSettingsMenu": "Chat Settings Menu"
+            },
+            "windowType": {
+                "_self": "Window Type",
+                "popup": "Popup",
+                "tab": "Tab"
+            },
+            "alwaysNewWindow": "Always open in new window",
+            "popupSize": "Popup Size"
+        }
+    },
+    "chatIndicator": {
+        "_self": "Chat Sending Status",
+        "behavior": {
+            "_self": "Behavior",
+            "showWaiting": "Response waiting (gray)",
+            "showSuccess": "Sending success (green)",
+            "showTimeout": "Response timeout (orange)",
+            "hideAfter": "Hide After"
+        },
+        "appearance": {
+            "_self": "Appearance",
+            "thickness": {
+                "_self": "Thickness",
+                "light": "Light",
+                "normal": "Normal",
+                "bold": "Bold"
+            },
+            "width": "Width"
+        }
+    }
+}

@@ -1,7 +1,9 @@
 import "../app.css";
 import 'simplebar';
-// import 'simplebar/dist/simplebar.css';
 import PopupApp from "src/components/PopupApp.svelte";
+import { initI18next } from "src/i18n";
+
+initI18next();
 
 const target = document.getElementById('app');
 

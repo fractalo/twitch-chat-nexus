@@ -1,7 +1,9 @@
 import "../app.css";
 import 'simplebar';
-// import 'simplebar/dist/simplebar.css';
 import OptionApp from "src/components/OptionApp.svelte";
+import { initI18next } from "src/i18n";
+
+initI18next();
 
 const target = document.getElementById('app');
 

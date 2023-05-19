@@ -26,17 +26,7 @@ export const settingDefinitions: MainCategorySettings = {
             popupSize: {
                 type: 'select',
                 default: "100%",
-                options: [
-                    "75%",
-                    "80%",
-                    "90%",
-                    "100%",
-                    "110%",
-                    "125%",
-                    "150%",
-                    "175%",
-                    "200%",
-                ]
+                options: [ "75%", "80%", "90%", "100%", "110%", "125%", "150%", "175%", "200%" ]
             }
         }
     },
@@ -76,23 +66,12 @@ export const settingDefinitions: MainCategorySettings = {
             width: {
                 type: 'select',
                 default: "100%",
-                options: [
-                    "10%",
-                    "20%",
-                    "30%",
-                    "50%",
-                    "75%",
-                    "100%"
-                ]
+                options: [ "10%", "20%", "30%", "50%", "75%", "100%" ]
             }
         },
     }
 };
 
-
-export const getSettingsI18nMessage = (path: string[]) => {
-    return chrome.i18n.getMessage(['settings', ...path].join('_'));
-};
 
 const isSettingValueValid = (settingValue: SettingValue, setting: Setting) => {
     switch (setting.type) {

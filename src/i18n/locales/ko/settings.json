@@ -1,0 +1,40 @@
+{
+    "chatLogView": {
+        "_self": "채팅 기록",
+        "openingButton": {
+            "_self": "채팅 기록 버튼",
+            "location": {
+                "_self": "위치",
+                "bottomOfChatWindow": "채팅창 하단",
+                "chatSettingsMenu": "채팅 설정 메뉴"
+            },
+            "windowType": {
+                "_self": "창 유형",
+                "popup": "팝업",
+                "tab": "탭"
+            },
+            "alwaysNewWindow": "항상 새 창으로 열기",
+            "popupSize": "팝업 크기"
+        }
+    },
+    "chatIndicator": {
+        "_self": "채팅 전송 상태",
+        "behavior": {
+            "_self": "행동",
+            "showWaiting": "응답 대기 중 (회색)",
+            "showSuccess": "전송 성공 (초록색)",
+            "showTimeout": "응답 시간 초과 (주황색)",
+            "hideAfter": "일정 시간 이후 숨기기"
+        },
+        "appearance": {
+            "_self": "외형",
+            "thickness": {
+                "_self": "두께",
+                "light": "얇음",
+                "normal": "보통",
+                "bold": "두꺼움"
+            },
+            "width": "너비"
+        }
+    }
+}

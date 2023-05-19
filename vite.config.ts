@@ -1,6 +1,7 @@
 import { crx } from "@crxjs/vite-plugin";
 import { defineConfig, UserConfig } from 'vite'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
+import i18nextLoader from 'vite-plugin-i18next-loader'
 import { resolve } from "path";
 import manifest from "./manifest.json";
 
@@ -11,13 +12,18 @@ const userConfigs: Record<string, UserConfig> = {
     main: {
         plugins: [
             svelte(), 
-            crx({ manifest })
+            crx({ manifest }),
+            i18nextLoader({ 
+                paths: [resolve(srcDir, "i18n/locales")],
+                namespaceResolution: 'basename'
+            }),
         ],
     },
     injectedScript: {
         plugins: [
             svelte({
                 emitCss: false
+            })
         ],
         build: {
             rollupOptions: {

@@ -3,12 +3,11 @@
   import Fa from 'svelte-fa/src/fa.svelte';
   import { faGithub } from '@fortawesome/free-brands-svg-icons';
   import { faCircleQuestion, faStar } from '@fortawesome/free-solid-svg-icons';
+  import { i18n } from 'src/i18n';
 
   const manifest = chrome.runtime.getManifest();
 
   const createTab = (url: string) => chrome.tabs.create({ url });
-
-  const getI18nMessage = (name: string) => chrome.i18n.getMessage(name);
 
 </script>
 
@@ -22,9 +21,9 @@
   
   <div class="hero bg-base-100 mt-4">
     <div class="hero-content">
-      <div class="tooltip tooltip-bottom" data-tip="{getI18nMessage("help")}">
+      <div class="tooltip tooltip-bottom" data-tip="{$i18n.t('help')}">
         <button class="btn btn-primary btn-square btn-ghost normal-case"
-          on:click={() => createTab(`https://twitch-chat-history.gitbook.io/docs/v/${getI18nMessage("help_language")}`)}
+          on:click={() => createTab(`https://twitch-chat-history.gitbook.io/docs/v/${$i18n.t('helpLanguage')}`)}
         >
           <Fa class="text-2xl" icon={faCircleQuestion} />
         </button>
@@ -38,7 +37,7 @@
         </button>
       </div>
 
-      <div class="tooltip tooltip-bottom" data-tip="{getI18nMessage("rate")}">
+      <div class="tooltip tooltip-bottom" data-tip="{$i18n.t('rate')}">
         <button class="btn btn-primary btn-square btn-ghost normal-case"
           on:click={() => createTab(`https://chrome.google.com/webstore/detail/twitch-chat-history/oopcjaklhenijofoanbpchndknfadldn/reviews`)}
         >

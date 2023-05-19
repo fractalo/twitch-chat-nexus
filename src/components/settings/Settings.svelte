@@ -3,11 +3,12 @@
   import SelectSetting from "./SelectSetting.svelte";
   import {
     settingDefinitions,
-    getSettingsI18nMessage,
     getSettingValues
   } from "./settings";
   import type { MainCategorySettingValues } from "./types";
   import RangeSetting from "./RangeSetting.svelte";
+  import { i18n } from "src/i18n";
+  import type { ResourceKey } from "i18next";
 
   let settingValues: MainCategorySettingValues | null = null;
 
@@ -17,6 +18,16 @@
 
   const handleChange = () => {
     chrome.storage.local.set({ settings: settingValues });
+  };
+
+  const getSettingsI18n = (keys: string[]) => {
+    const key = keys.join('.');
+    const value: ResourceKey = $i18n.t(key, { 
+      ns: 'settings',
+      returnObjects: true,
+      defaultValue: ''
+    });
+    return typeof value === 'string' ? value : value._self; 
   };
 
 </script>
@@ -29,7 +40,7 @@
         class="tab text-sm {currentMenu === menu ? 'tab-active' : ''} rounded-none"
         on:click={() => (currentMenu = menu)}
       >
-        {getSettingsI18nMessage([menu])}
+        {getSettingsI18n([menu])}
       </a>
     {/each}
   </div>
@@ -40,57 +51,40 @@
         {#each Object.keys(settingDefinitions[currentMenu] || {}) as category (category)}
           <div class="flex flex-col w-full gap-1">
             <h2 class="text-base ">
-              {getSettingsI18nMessage([currentMenu, category])}
+              {getSettingsI18n([currentMenu, category])}
             </h2>
             <div class="card bg-base-200 rounded-box place-items-center p-3 gap-1">
-              {#each Object.entries(settingDefinitions[currentMenu][category]) as [id, setting] (id)}
+              {#each Object.entries(settingDefinitions[currentMenu][category]) as [setting, definition] (setting)}
                 <div class="form-control w-full max-w-xs">
-                  {#if setting.type === "select"}
+                  {#if definition.type === "select"}
                     <SelectSetting
-                      bind:value={settingValues[currentMenu][category][id]}
+                      bind:value={settingValues[currentMenu][category][setting]}
                       on:change={handleChange}
-                      settingName={getSettingsI18nMessage([
-                        currentMenu,
-                        category,
-                        id,
-                      ])}
-                      id={[currentMenu, category, id].join('.')}
-                      options={setting.options.map((option) => {
+                      settingName={getSettingsI18n([currentMenu, category, setting])}
+                      id={[currentMenu, category, setting].join('.')}
+                      options={definition.options.map((option) => {
                         return {
                           id: option,
-                          name: getSettingsI18nMessage([
-                            currentMenu,
-                            category,
-                            id,
-                            option,
-                          ]),
+                          name: getSettingsI18n([currentMenu, category, setting, option]),
                         };
                       })}
                     />
-                  {:else if setting.type === 'toggle'}
+                  {:else if definition.type === 'toggle'}
                     <ToggleSetting
-                      bind:value={settingValues[currentMenu][category][id]}
+                      bind:value={settingValues[currentMenu][category][setting]}
                       on:change={handleChange}
-                      settingName={getSettingsI18nMessage([
-                        currentMenu,
-                        category,
-                        id,
-                      ])}
+                      settingName={getSettingsI18n([currentMenu, category, setting])}
                     />
-                  {:else if setting.type === 'range'}
+                  {:else if definition.type === 'range'}
                     <RangeSetting
-                      bind:value={settingValues[currentMenu][category][id]}
+                      bind:value={settingValues[currentMenu][category][setting]}
                       on:change={handleChange}
-                      settingName={getSettingsI18nMessage([
-                        currentMenu,
-                        category,
-                        id,
-                      ])}
-                      id={[currentMenu, category, id].join('.')}
-                      min={setting.min}
-                      max={setting.max}
-                      step={setting.step}
-                      unit={setting.unit}
+                      settingName={getSettingsI18n([currentMenu, category, setting])}
+                      id={[currentMenu, category, setting].join('.')}
+                      min={definition.min}
+                      max={definition.max}
+                      step={definition.step}
+                      unit={definition.unit}
                     />
                   {/if}
                 </div>
