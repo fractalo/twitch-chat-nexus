@@ -1,5 +1,5 @@
 import { sha256 } from 'crypto-hash';
-import query from './query.gql';
+import query from './query.gql?raw';
 import type { GqlRequest } from '../../types';
 import { isRecord } from 'src/util/SafeAny';
 
