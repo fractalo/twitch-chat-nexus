@@ -1,13 +1,13 @@
 import i18next, {type LanguageDetectorModule} from "i18next";
-import { createI18nStore } from "svelte-i18next";
 import LanguageDetector from './languageDetectors/browser';
 import resources from 'virtual:i18next-loader';
+import { createI18nStore } from "svelte-i18next";
 
 
-let isInitializationStarted = false;
+let didInitialization = false;
 
 export const initI18next = (languageDetector: LanguageDetectorModule = LanguageDetector) => {
-    if (isInitializationStarted) {
+    if (didInitialization) {
         return i18next;
     }
 
@@ -21,10 +21,11 @@ export const initI18next = (languageDetector: LanguageDetectorModule = LanguageD
         defaultNS: 'translation',
         interpolation: {
             escapeValue: false,
-        }
+        },
+        returnNull: false,
     });
 
-    isInitializationStarted = true;
+    didInitialization = true;
 
     return i18next;
 };
