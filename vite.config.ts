@@ -1,7 +1,7 @@
 import { crx } from "@crxjs/vite-plugin";
-import { defineConfig, UserConfig } from 'vite'
-import { svelte } from '@sveltejs/vite-plugin-svelte'
-import i18nextLoader from 'vite-plugin-i18next-loader'
+import { defineConfig, UserConfig } from 'vite';
+import { svelte } from '@sveltejs/vite-plugin-svelte';
+import i18nextLoader from 'vite-plugin-i18next-loader';
 import { resolve } from "path";
 import manifest from "./manifest.json";
 
@@ -18,17 +18,15 @@ const userConfigs: Record<string, UserConfig> = {
                 namespaceResolution: 'basename'
             }),
         ],
+        build: {
+            modulePreload: false,
+        }
     },
-    injectedScript: {
-        plugins: [
-            svelte({
-                emitCss: false
-            })
-        ],
+    interceptor: {
         build: {
             rollupOptions: {
                 input: {
-                    injected: resolve(srcDir, "injected/index.ts")
+                    interceptor: resolve(srcDir, "injected/interceptor/index.ts")
                 },
                 output: {
                     entryFileNames: '[name].js',

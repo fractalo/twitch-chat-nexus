@@ -1,5 +1,5 @@
-export const isWindowAvailable = (_window: Window) => {
-    if (_window.closed) {
+export const isWindowAvailable = (_window: Window | null) => {
+    if (!_window || _window.closed) {
         return false;
     }
 

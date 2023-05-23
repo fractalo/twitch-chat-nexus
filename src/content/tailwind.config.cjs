@@ -3,7 +3,7 @@
 module.exports = {
   content: [
     './src/content/**/*.{html,js,svelte,ts}',
-    './src/injected/**/*.{html,js,svelte,ts}'
+    './src/injected/main/**/*.{html,js,svelte,ts}'
   ],
   theme: {
     extend: {},

@@ -1,8 +1,8 @@
 
 chrome.scripting.registerContentScripts([
     {
-        id: "tch_injected",
-        js: ['injected.js'],
+        id: "tch_injected_interceptor",
+        js: ['interceptor.js'],
         matches: ["*://*.twitch.tv/*"],
         runAt: "document_start",
         allFrames: true,

@@ -1,19 +1,27 @@
 // https://dev.to/jacksteamdev/advanced-config-for-rpce-3966
 
-
 import styles from './styles.css?inline';
-import { injectInlineStyle } from "src/util/injectors";
-import { initI18next } from "src/i18n";
-import LanguageDetector from "src/i18n/languageDetectors/twitch";
-import './messaging';
-import i18next from 'i18next';
+import injectedMain from '../injected/main?script&module';
+import { injectInlineStyle, injectScript } from "src/util/injectors";
+import { type MainCategorySettingValues } from 'src/components/settings';
+import messaging from './messaging';
+
 
 injectInlineStyle(styles);
 
-initI18next(LanguageDetector);
+injectScript(injectedMain);
 
-i18next.on('initialized', () => {
-    console.log(i18next.t('help'));
+
+
+/** post updated setting values */
+chrome.storage.local.onChanged.addListener((changes) => {
+    const newSettingValues = changes.settings?.newValue as MainCategorySettingValues | undefined;
+    if (!newSettingValues) return;
+
+    messaging.postMessage({ type: "SETTINGS", content: newSettingValues });
 });
-console.log(i18next.getDataByLanguage('ko'));
+
+
+
+
 

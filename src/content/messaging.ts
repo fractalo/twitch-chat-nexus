@@ -1,9 +1,9 @@
 import { Messaging } from "src/components/Messaging";
 import { ScriptIds } from "src/constants/scripts";
-import { getSettingValues, type MainCategorySettingValues } from "src/components/settings";
+import { getSettingValues } from "src/components/settings";
 
 
-const messaging = new Messaging(ScriptIds.content);
+const messaging = new Messaging(ScriptIds.CONTENT);
 
 messaging.on('connect', () => {
     getSettingValues()
@@ -13,7 +13,7 @@ messaging.on('connect', () => {
 });
 
 
-// from injected script
+// from injected scripts
 messaging.on('message', (message) => {
     switch (message.type) {
         case 'GET_SETTINGS': {
@@ -52,9 +52,4 @@ chrome.runtime.onMessage.addListener((message, sender) => {
     }
 });
 
-chrome.storage.local.onChanged.addListener((changes) => {
-    const newSettingValues = changes.settings?.newValue as MainCategorySettingValues | undefined;
-    if (!newSettingValues) return;
-
-    messaging.postMessage({ type: "SETTINGS", content: newSettingValues });
-});
+export default messaging;
