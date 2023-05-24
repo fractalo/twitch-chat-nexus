@@ -1,7 +1,7 @@
 {
   "name": "twitch-chat-history",
   "private": true,
-  "version": "1.1.0",
+  "version": "1.1.1",
   "type": "module",
   "scripts": {
     "dev": "cross-env BUILD_TYPE=main vite",
