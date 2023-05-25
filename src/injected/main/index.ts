@@ -1,17 +1,24 @@
-import './messaging';
+import { ScriptIds } from 'src/constants/scripts';
+import messaging from './messaging';
 import './routes';
 import { initI18next } from "src/i18n";
-import LanguageDetector from "src/i18n/languageDetectors/twitch";
+import { createLanguageDetector } from "src/i18n/languageDetectors/twitch";
 import { waitForDOMReady } from 'src/util/waitForDOMReady';
 
 
-/** initialize i18next */
-initI18next(LanguageDetector);
+(async() => {
+    messaging.postMessage({ type: "GET_LANGUAGE" });
+    const browserUILang = await messaging.waitForMessage<string>(ScriptIds.CONTENT, "LANGUAGE");
 
+    /** initialize i18next */
+    const languageDetector = createLanguageDetector(browserUILang);
+    initI18next(languageDetector);
 
-/** load modules */
-const modules = import.meta.glob('./modules/*/index.ts');
+    /** load modules */
+    const modules = import.meta.glob('./modules/*/index.ts');
 
-waitForDOMReady().then(() => {
+    await waitForDOMReady();
+
     Object.keys(modules).forEach(path => modules[path]());
-});
+
+})();

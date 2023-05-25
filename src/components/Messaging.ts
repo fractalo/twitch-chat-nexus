@@ -110,5 +110,27 @@ export class Messaging {
             });
         });
     }
+
+    async waitForMessage<T>(from: string, type: string, timeout: number = 10_000) {
+        return new Promise<T | null>((resolve) => {
+            let timer: number| undefined;
+            const removeListener = this.on('message', (message) => {
+                if (
+                    message.from === from &&
+                    message.type === type
+                ) {
+                    clearTimeout(timer);
+                    removeListener();
+                    resolve(message.content);
+                }
+            });
+            if (timeout > 0) {
+                timer = window.setTimeout(() => {
+                    removeListener();
+                    resolve(null);
+                }, timeout);
+            }
+        });
+    }
 }
 

@@ -38,6 +38,10 @@ messaging.on('message', (message) => {
             }
             break;
         }
+        case 'GET_LANGUAGE': {
+            messaging.postMessage({ type: 'LANGUAGE', content: chrome.i18n.getUILanguage() });
+            break;
+        }
         default:
     }
 });
