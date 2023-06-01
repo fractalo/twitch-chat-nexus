@@ -5,16 +5,17 @@ import { createNanoEvents, type Emitter } from "nanoevents";
 
 interface Events {
     update: () => void;
+    destroy: (isPermanent: boolean) => void;
 }
 
 class LiveChat {
-    private readonly validRouteNames = ['channel', 'chat', 'embed-chat'];
+    private readonly validRouteNames = ['channel', 'channel-home', 'chat', 'embed-chat'];
     private emitter: Emitter;
     
     private removeDOMListener: ReturnType<typeof domObserver.on> | null = null;
     private domListenerTimer: number | undefined;
 
-    private streamChatEl: HTMLElement | null = null; // static element
+    private streamChatEl: HTMLElement | null = null; // assumed as static element
     private chatRoomContentEl: HTMLElement | null = null;
     
     private streamChatChildObserver: MutationObserver;
@@ -35,23 +36,17 @@ class LiveChat {
 
         const init = (routeName: string) => {
             if (this.validRouteNames.includes(routeName)) {
-                // setup
+                this.cleanup(false);
                 this.startListeningDOMUpdates();
                 this._isEnabled = true;
             } else {
-                // cleanup
-                this.stopListeningDOMUpdates();
-                this.disconnectObservers();
-                this.streamChatEl = null;
-                this.chatRoomContentEl = null;
-                this._isEnabled = false;
+                this.cleanup(true);
             }
         };
 
         routes.on('change', init);
 
         init(routes.name);
-
     }
 
     get isEnabled() {
@@ -61,6 +56,18 @@ class LiveChat {
     private disconnectObservers() {
         this.streamChatChildObserver.disconnect();
         this.chatRoomContentChildObserver.disconnect();
+    }
+
+    private cleanup(isPermanent: boolean) {
+        if (!this._isEnabled) return;
+
+        this.stopListeningDOMUpdates();
+        this.disconnectObservers();
+        this.streamChatEl = null;
+        this.chatRoomContentEl = null;
+        this._isEnabled = false;
+
+        this.emitter.emit('destroy', isPermanent);
     }
 
     on<E extends keyof Events>(event: E, callback: Events[E]) {
@@ -79,10 +86,7 @@ class LiveChat {
     }
 
     private stopListeningDOMUpdates() {
-        if (!this.removeDOMListener) {
-            return;
-        }
-        this.removeDOMListener();
+        this.removeDOMListener?.();
         this.removeDOMListener = null;
     }
 
