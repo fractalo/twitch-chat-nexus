@@ -1,11 +1,10 @@
 import { writable } from 'svelte/store';
 import type { ChatLogStyleState, ChatLogRequestConfig } from './types';
-import { DEFAULT_SORT_ORDER } from './constants';
 
 const defaultRequestConfig: ChatLogRequestConfig = {
     pageSize: 300,
-    sortOrder: DEFAULT_SORT_ORDER,
-    cursor: null
+    cursor: null,
+    direction: 'next',
 };
 
 export const requestConfig = writable<ChatLogRequestConfig>(defaultRequestConfig);

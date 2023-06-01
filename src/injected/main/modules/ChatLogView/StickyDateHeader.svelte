@@ -68,7 +68,7 @@
     const logEls = [...scrollContentEl.firstElementChild.firstElementChild.children] as HTMLElement[];
 
     separatorEls = logEls.filter((el) => {
-      return !el.querySelector('.message__timestamp') && el.textContent;
+      return !el.querySelector('.message__timestamp,.message-author__username') && el.textContent;
     });
 
     // Return if no separators found

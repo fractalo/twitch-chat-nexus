@@ -1,9 +1,11 @@
 export type SortOrder = "ASC" | "DESC";
 
+export type PaginationDirection = 'previous' | 'next';
+
 export interface ChatLogRequestConfig {
     pageSize: number;
-    sortOrder: SortOrder;
     cursor: string | null;
+    direction: PaginationDirection;
 }
 
 export interface ChatLogStyleState {

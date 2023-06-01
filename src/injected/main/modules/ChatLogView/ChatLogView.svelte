@@ -1,11 +1,10 @@
 <script lang="ts">
-    import { faRotateRight, faForwardStep, faBackwardStep, faAngleLeft, faAngleRight, faGear } from '@fortawesome/free-solid-svg-icons';
+    import { faRotateRight, faBackwardStep, faAngleLeft, faAngleRight, faGear } from '@fortawesome/free-solid-svg-icons';
     import Tooltip from "../../components/Tooltip.svelte";
     import IconButton from "../../components/IconButton.svelte";
-    import { DEFAULT_SORT_ORDER, PAGE_SIZES, CHAT_LOG_OPERATION_NAME, DEFAULT_PAGE_SIZE } from './constants';
-
+    import { PAGE_SIZES, CHAT_LOG_OPERATION_NAME, DEFAULT_PAGE_SIZE } from './constants';
     import { isPersistedQueryNotFound } from "src/injected/interceptor/clients/GqlClient/isPersistedQueryNotFound";
-    import { createModLogsMessagesRequest, filterEdges, modLogsMessagesQuery, type ModLogsMessagesGqlRequest } from "src/injected/interceptor/clients/GqlClient/operations/TCH_ViewerCardModLogsMessagesBySender";
+    import { createModLogsMessagesRequest, filterEdges, modLogsMessagesQuery, type ModLogsMessagesGqlRequest } from "src/injected/interceptor/clients/GqlClient/operations/TCH_ViewerCardModLogsMessagesBySenderV2";
     import type { GqlRequest, GqlResponse } from "src/injected/interceptor/clients/GqlClient/types";
     import { isRecord } from "src/util/SafeAny";
     import { assignPropertyIfValid } from "src/util/assignPropertyIfValid";
@@ -25,78 +24,53 @@
         refreshMessagesTab();
     };
 
+    /**
+     * Stack used to return to the previous page.
+     * last element is always current page cursor.
+     */
+    let prevPageCursors: string[] = [];
 
-
-    let prevPageCursor: string | null = null;
     let nextPageCursor: string | null = null;
 
     let isFirstPage = true;
     let isLastPage = true;
 
-    let hasMorePage = false;
-
     let isPaginationEnabled = false;
 
-    const handlePaginationToggle = () => {
-        $requestConfig.sortOrder = DEFAULT_SORT_ORDER;
-        $requestConfig.cursor = null;
-        prevPageCursor = null;
-        nextPageCursor = null;
-        hasMorePage = false;
-        triggerChatLogFetch();
-    };
-
     const fetchFirstPage = () => {
-        $requestConfig.sortOrder = 'DESC';
+        $requestConfig.direction = 'next';
         $requestConfig.cursor = null;
-        setTimeout(triggerChatLogFetch, 10);
-    };
-
-    const fetchLastPage = () => {
-        $requestConfig.sortOrder = 'ASC';
-        $requestConfig.cursor = null;
+        prevPageCursors = [];
+        nextPageCursor = null;
         setTimeout(triggerChatLogFetch, 10);
     };
 
     const fetchPrevPage = () => {
-        if (!prevPageCursor) {
+        if (prevPageCursors.length <= 1) {
             return fetchFirstPage();
         }
-        $requestConfig.sortOrder = 'ASC';
-        $requestConfig.cursor = prevPageCursor;
+        $requestConfig.direction = 'previous';
+        $requestConfig.cursor = prevPageCursors[prevPageCursors.length - 2];
         setTimeout(triggerChatLogFetch, 10);
     };
 
     const fetchNextPage = () => {
-        if (!nextPageCursor) {
-            return fetchLastPage();
-        }
-        $requestConfig.sortOrder = 'DESC';
+        $requestConfig.direction = 'next';
         $requestConfig.cursor = nextPageCursor;
         setTimeout(triggerChatLogFetch, 10);
     };
     
     const refreshPage = () => {
         if (isFirstPage) {
-            $requestConfig.sortOrder = 'DESC';
-            $requestConfig.cursor = null;
-        } else if (isLastPage) {
-            $requestConfig.sortOrder = 'ASC';
-            $requestConfig.cursor = null;
+            return fetchFirstPage();
         }
         triggerChatLogFetch();
     }
 
     $: {
-        if ($requestConfig.sortOrder === 'DESC') {
-            isFirstPage = !$requestConfig.cursor;
-            isLastPage = !nextPageCursor;
-        } else {
-            isFirstPage = !prevPageCursor;
-            isLastPage = !$requestConfig.cursor;
-        }
+        isFirstPage = !$requestConfig.cursor;
+        isLastPage = !nextPageCursor;
     }
-
 
 
     let isSettingsMenuOpen = false;
@@ -141,21 +115,21 @@
             return false;
         }
 
-        const messagesBySender = response?.data?.channel?.modLogs?.messagesBySender as unknown;
+        const messages = response?.data?.viewerCardModLogs?.messages as unknown;
 
-        return isRecord(messagesBySender) &&
-            Array.isArray(messagesBySender.edges) &&
-            !!filterEdges(messagesBySender.edges, request.variables).length;
+        return isRecord(messages) &&
+            Array.isArray(messages.edges) &&
+            !!filterEdges(messages.edges, request.variables).length;
     };
 
-    const fetchChatLog = async({channelLogin, senderID, signal}: {channelLogin: string, senderID: string, signal?: AbortSignal | null;}): Promise<GqlResponse> => {
+    const fetchChatLog = async({channelID, senderID, signal}: {channelID: string, senderID: string, signal?: AbortSignal | null;}): Promise<GqlResponse> => {
         const variables = {
-            channelLogin,
+            channelID,
             senderID,
             first: $requestConfig.pageSize,
-            order: $requestConfig.sortOrder,
             cursor: $requestConfig.cursor
         };
+        const paginationDirection = $requestConfig.direction;
 
         const request = await createModLogsMessagesRequest(variables);
 
@@ -182,12 +156,12 @@
             response.extensions.operationName = CHAT_LOG_OPERATION_NAME;
         }
 
-        const messagesBySender = response?.data?.channel?.modLogs?.messagesBySender as unknown;
+        const messages = response?.data?.viewerCardModLogs?.messages as unknown;
 
-        if (isRecord(messagesBySender) && Array.isArray(messagesBySender.edges)) {
-            const edges = filterEdges(messagesBySender.edges, variables);
+        if (isRecord(messages) && Array.isArray(messages.edges)) {
+            const edges = filterEdges(messages.edges, variables);
 
-            hasMorePage = Boolean(response?.data?.channel?.modLogs?.messagesBySender?.pageInfo?.hasNextPage);
+            let hasMorePage = Boolean(response?.data?.viewerCardModLogs?.messages?.pageInfo?.hasNextPage);
 
             /* check really don't have more page. */
             if (!hasMorePage && variables.cursor && edges[edges.length - 1]?.cursor) {
@@ -201,27 +175,32 @@
                 }, signal);
             }
 
-            /* make edges order to DESC */
-            if (variables.order === 'ASC') {
-                edges.reverse();
-            }
-
-            const firstCursor = edges[0]?.cursor || null;
             const lastCursor = edges[edges.length - 1]?.cursor || null;
 
-            if (variables.order === 'DESC') {
-                prevPageCursor = variables.cursor ? firstCursor : null;
-                nextPageCursor = hasMorePage ? lastCursor : null; 
-            } else {
-                prevPageCursor = hasMorePage ? firstCursor : null;
-                nextPageCursor = variables.cursor ? lastCursor : null;
-            }
+            nextPageCursor = hasMorePage ? lastCursor : null;
 
-            messagesBySender.edges = edges;
+            /* Make the last element of prevPageCursors always point to the cursor on the current page. */
+            if (paginationDirection === 'next') {
+                if (
+                    !prevPageCursors.length || 
+                    prevPageCursors[prevPageCursors.length - 1] !== variables.cursor
+                ) {
+                    variables.cursor && prevPageCursors.push(variables.cursor);
+                }
+            } else {
+                if (
+                    prevPageCursors.length && 
+                    prevPageCursors[prevPageCursors.length - 1] !== variables.cursor
+                ) {
+                    prevPageCursors.pop()
+                }
+            }
+            
+            messages.edges = edges;
         }
 
         /* prevent infinite scrolling */
-        if (!assignPropertyIfValid(response?.data?.channel?.modLogs?.messagesBySender?.pageInfo, 'hasNextPage', false)) {
+        if (!assignPropertyIfValid(response?.data?.viewerCardModLogs?.messages?.pageInfo, 'hasNextPage', false)) {
             console.log(`could not modify hasNextPage of ${CHAT_LOG_OPERATION_NAME} response`);
         }
 
@@ -237,9 +216,9 @@
 
         if (
             !request.variables ||
-            !request.variables?.channelLogin ||
+            !request.variables?.channelID ||
             !request.variables?.senderID ||
-            typeof request.variables.channelLogin !== 'string' ||
+            typeof request.variables.channelID !== 'string' ||
             typeof request.variables.senderID !== 'string'
         ) {
             console.warn(`[${CHAT_LOG_OPERATION_NAME}] unknown variables: ${request.variables}`);
@@ -253,13 +232,14 @@
             return { type: "response", response: gqlClient.fetchGqlData([request], {signal: abortController.signal}).then(response => response[0]) };
         }
 
-        const response = fetchChatLog({
-            channelLogin: request.variables.channelLogin,
-            senderID: request.variables.senderID,
-            signal: abortController.signal
-        });
-
-        return { type: "response", response };
+        return { 
+            type: "response", 
+            response: fetchChatLog({
+                channelID: request.variables.channelID,
+                senderID: request.variables.senderID,
+                signal: abortController.signal
+            })
+        };
     });
     
 </script>
@@ -288,18 +268,18 @@
                         <span class="daisy-label-text mr-2">{$i18n.t('chatLogView.paginationToggle')}</span> 
                         <input type="checkbox" class="daisy-toggle daisy-toggle-primary" 
                             bind:checked={isPaginationEnabled} 
-                            on:change={handlePaginationToggle}
+                            on:change={fetchFirstPage}
                         />
                     </label>
                 </div>
-                {#if isPaginationEnabled && screenWidth < 600}
+                {#if isPaginationEnabled && screenWidth < 530}
                     <div class="daisy-form-control ml-6 mb-2">
                         <label for="pageSize" class="daisy-label">
                             <span class="daisy-label-text">{$i18n.t('chatLogView.pageSize.label')}</span>
                         </label>
                         <select id="pageSize" class="daisy-select"
                             bind:value={$requestConfig.pageSize} 
-                            on:change={triggerChatLogFetch}
+                            on:change={fetchFirstPage}
                         >
                             {#each PAGE_SIZES as size}
                                 <option value={size}>{size.toLocaleString('en-US')}{$i18n.t('chatLogView.pageSize.suffix')}</option>
@@ -328,7 +308,7 @@
         <Tooltip text={$i18n.t('chatLogView.paginationButtons.first.tooltip')}>
             <IconButton type="primary" icon={faBackwardStep} handleClick={fetchFirstPage} disabled={isFirstPage} />
         </Tooltip>
-        {#if screenWidth >= 400}
+        {#if screenWidth >= 330}
             <IconButton type="primary" icon={faAngleLeft} text={$i18n.t('chatLogView.paginationButtons.previous.label')} textPosition="right" handleClick={fetchPrevPage} disabled={isFirstPage} />
             <IconButton type="primary" icon={faAngleRight} text={$i18n.t('chatLogView.paginationButtons.next.label')} textPosition="left" handleClick={fetchNextPage} disabled={isLastPage} />
         {:else}
@@ -339,15 +319,12 @@
                 <IconButton type="primary" icon={faAngleRight} handleClick={fetchNextPage} disabled={isLastPage} />
             </Tooltip>
         {/if}
-        <Tooltip text={$i18n.t('chatLogView.paginationButtons.last.tooltip')}>
-            <IconButton type="primary" icon={faForwardStep} handleClick={fetchLastPage} disabled={isLastPage} />
-        </Tooltip>
 
-        {#if screenWidth >= 600}
+        {#if screenWidth >= 530}
             <Tooltip text={$i18n.t('chatLogView.pageSize.label')}>
                 <select class="daisy-select ml-2"
                     bind:value={$requestConfig.pageSize} 
-                    on:change={triggerChatLogFetch}
+                    on:change={fetchFirstPage}
                 >
                     {#each PAGE_SIZES as size}
                         <option value={size}>{size.toLocaleString('en-US')}{$i18n.t('chatLogView.pageSize.suffix')}</option>

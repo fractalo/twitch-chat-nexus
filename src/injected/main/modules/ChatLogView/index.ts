@@ -3,7 +3,7 @@ import { getDrawerTabsEl, getModLogsPageEl } from "./viewerCard";
 import { isSelfViewerCardPage, setDaisyUiTheme } from "src/util/twitch";
 import StickyDateHeader from './StickyDateHeader.svelte';
 import { requestConfig } from './stores';
-import type { SortOrder } from "./types";
+import type { PaginationDirection, SortOrder } from "./types";
 import { getGqlClient } from "../../clients";
 import messaging from "../../messaging";
 import { ScriptIds } from "src/constants/scripts";
@@ -39,7 +39,7 @@ class ChatLogViewManager {
         setDaisyUiTheme(rootEl);
 
         const modDrawerTabEls = [...modDrawerTabsEl.children] as HTMLElement[];
-        const modDrawerTabBtnEls = modDrawerTabEls.map(el => el.querySelector('a'));
+        const modDrawerTabBtnEls = modDrawerTabEls.map(el => el.querySelector<HTMLButtonElement | HTMLAnchorElement>('button,a'));
 
         if (this.isModerator) {
             modDrawerTabBtnEls.forEach((el, i) => {
@@ -81,14 +81,22 @@ class ChatLogViewManager {
 
         new StickyDateHeader({ target: rootEl, props: { modLogsPageEl } });
 
-        let sortOrder: SortOrder;
-        requestConfig.subscribe(value => sortOrder = value.sortOrder);
+        let paginationDirection: PaginationDirection;
+        requestConfig.subscribe(value => paginationDirection = value.direction);
 
         new MutationObserver(() => {
             const contentEl = modLogsPageEl.querySelector(".simplebar-scroll-content");
-            if (contentEl && sortOrder === 'ASC') {
+            
+            if (contentEl && paginationDirection === 'previous') {
                 const timer = setInterval(() => {
                     if (!contentEl.scrollTop) {
+                        const scrollToTop = () => {
+                            contentEl.scrollTo(0, 0);
+                            contentEl.removeEventListener('scroll', scrollToTop);
+                            contentEl.removeEventListener('click', scrollToTop);
+                        };
+                        contentEl.addEventListener('scroll', scrollToTop);
+                        contentEl.addEventListener('click', scrollToTop);
                         clearInterval(timer);
                         return;
                     }
