@@ -18,19 +18,19 @@ class LiveChat {
     private streamChatEl: HTMLElement | null = null; // assumed as static element
     private chatRoomContentEl: HTMLElement | null = null;
     
-    private streamChatChildObserver: MutationObserver;
-    private chatRoomContentChildObserver: MutationObserver;
+    private streamChatObserver: MutationObserver;
+    private chatRoomContentObserver: MutationObserver;
 
     private _isEnabled = false;
 
     constructor() {
         this.emitter = createNanoEvents<Events>();
 
-        this.streamChatChildObserver = new MutationObserver(() => {
+        this.streamChatObserver = new MutationObserver(() => {
             this.startListeningDOMUpdates();
         });
 
-        this.chatRoomContentChildObserver = new MutationObserver(() => {
+        this.chatRoomContentObserver = new MutationObserver(() => {
             this.startListeningDOMUpdates();
         });
 
@@ -54,8 +54,8 @@ class LiveChat {
     }
 
     private disconnectObservers() {
-        this.streamChatChildObserver.disconnect();
-        this.chatRoomContentChildObserver.disconnect();
+        this.streamChatObserver.disconnect();
+        this.chatRoomContentObserver.disconnect();
     }
 
     private cleanup(isPermanent: boolean) {
@@ -93,12 +93,18 @@ class LiveChat {
     private handleDOMUpdate() {
         if (!document.contains(this.streamChatEl)) {
             this.streamChatEl = document.querySelector('.stream-chat');
-            this.streamChatEl && this.streamChatChildObserver.observe(this.streamChatEl, { childList: true });
+            if (this.streamChatEl) {
+                this.streamChatObserver.disconnect();
+                this.streamChatObserver.observe(this.streamChatEl, { childList: true });
+            }
         }
     
         if (!document.contains(this.chatRoomContentEl)) {
             this.chatRoomContentEl = document.querySelector('.chat-room__content');
-            this.chatRoomContentEl && this.chatRoomContentChildObserver.observe(this.chatRoomContentEl, { childList: true });
+            if (this.chatRoomContentEl) {
+                this.chatRoomContentObserver.disconnect();
+                this.chatRoomContentObserver.observe(this.chatRoomContentEl, { childList: true });
+            }
         }
 
         this.emitter.emit('update');
