@@ -4,7 +4,7 @@
     import IconButton from "../../components/IconButton.svelte";
     import { PAGE_SIZES, CHAT_LOG_OPERATION_NAME, DEFAULT_PAGE_SIZE } from './constants';
     import { isPersistedQueryNotFound } from "src/injected/interceptor/clients/GqlClient/isPersistedQueryNotFound";
-    import { createModLogsMessagesRequest, filterEdges, modLogsMessagesQuery, type ModLogsMessagesGqlRequest } from "src/injected/interceptor/clients/GqlClient/operations/TCH_ViewerCardModLogsMessagesBySenderV2";
+    import { createModLogsMessagesRequest, filterEdges, modLogsMessagesQuery, type ModLogsMessagesGqlRequest } from "src/injected/interceptor/clients/GqlClient/operations/TCH_ViewerCardModLogsMessagesBySender";
     import type { GqlRequest, GqlResponse } from "src/injected/interceptor/clients/GqlClient/types";
     import { isRecord } from "src/util/SafeAny";
     import { assignPropertyIfValid } from "src/util/assignPropertyIfValid";

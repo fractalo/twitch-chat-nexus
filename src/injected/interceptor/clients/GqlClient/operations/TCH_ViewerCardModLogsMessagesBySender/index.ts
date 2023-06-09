@@ -5,13 +5,10 @@ import { isRecord } from 'src/util/SafeAny';
 
 const queryHash = sha256(query);
 
-type SortOrder = "ASC" | "DESC";
-
 interface Variables extends Record<string, unknown> {
-    channelLogin: string;
+    channelID: string;
     senderID: string;
     first: number;
-    order: SortOrder;
     cursor: string | null;
 }
 
@@ -39,16 +36,25 @@ interface Edge {
     cursor: string;
 }
 
+const getZumaFromCursor = (cursor: string) => {
+    try {
+        const parsedCursor = JSON.parse(window.atob(cursor)) as unknown;
+        if (isRecord(parsedCursor) && typeof parsedCursor?.zuma === 'string') {
+            return parsedCursor.zuma;
+        }
+    } catch {}
+};
+
 export const filterEdges = (edges: unknown[], variables: Variables): Edge[] => {
+    const cursorZuma = variables.cursor ? getZumaFromCursor(variables.cursor) : null;
+    
     return edges.filter((edge): edge is Edge => {
         if (!isRecord(edge) || !edge.cursor || typeof edge.cursor !== 'string') return false;
-        if (!variables.cursor) return true;
+        if (!cursorZuma) return true;
+        
+        const edgeZuma = getZumaFromCursor(edge.cursor);
 
-        if (variables.order === "ASC") {
-            return edge.cursor > variables.cursor;
-        } else {
-            return edge.cursor < variables.cursor;
-        }
+        return !!edgeZuma && (edgeZuma < cursorZuma);
     });
 };
 
