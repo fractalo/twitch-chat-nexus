@@ -6,7 +6,7 @@ let modDrawerTabsElPromise: Promise<HTMLElement> | null = null;
 export const getDrawerTabsEl = async() => {
     return modDrawerTabsElPromise ??= domObserver.waitForElement(
         '.viewer-card-mod-drawer-tabs', 
-        (el) => el.childElementCount === 4 && el.firstElementChild?.querySelectorAll('p').length === 2
+        el => el.childElementCount === 4
     );
 };
 
