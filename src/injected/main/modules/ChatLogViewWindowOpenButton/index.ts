@@ -1,13 +1,14 @@
 import ChatLogViewWindowOpenButton from "./ChatLogViewWindowOpenButton.svelte";
 import liveChat from "src/injected/main/elements/LiveChat";
 import { configStore } from "./stores";
+import type { Unsubscribe } from "nanoevents";
 
 
 class ChatLogViewWindowOpenButtonManager {
     private rootEl: HTMLElement;
     private button: ChatLogViewWindowOpenButton;
     private mutationObservers: MutationObserver[] = [];
-    private removeLiveChatListener: ReturnType<typeof liveChat.on> | null = null;
+    private unsubscribers: Unsubscribe[] = [];
 
     constructor() {
         this.rootEl = document.createElement('div');
@@ -25,34 +26,42 @@ class ChatLogViewWindowOpenButtonManager {
         });
     }
 
-    private updateButton(location: string) {
+    private destroyButton() {
         this.mutationObservers.forEach(observer => observer.disconnect());
-        this.removeLiveChatListener?.();
+        this.mutationObservers = [];
+        this.unsubscribers.forEach(unbind => unbind());
+        this.unsubscribers = [];
         this.rootEl.remove();
+    }
+
+    private updateButton(location: string) {
+        this.destroyButton();
 
         switch (location) {
             case 'bottomOfChatWindow': {
                 const insertButton = () => {
                     if (document.contains(this.rootEl)) return;
                     const chatSettingsButtonEl = document.querySelector('button[data-a-target="chat-settings"]');
-                    const chatSettingsButtonWrapperEl = chatSettingsButtonEl?.parentElement?.parentElement?.parentElement?.parentElement;
-                    chatSettingsButtonWrapperEl?.parentElement?.insertBefore(this.rootEl, chatSettingsButtonWrapperEl);
+                    const chatSettingsButtonWrapperEl = chatSettingsButtonEl?.parentElement?.parentElement?.parentElement;
+                    chatSettingsButtonWrapperEl?.insertAdjacentElement('beforebegin', this.rootEl);
                 };
-                this.removeLiveChatListener = liveChat.on('update', insertButton);
+                this.unsubscribers.push(
+                    liveChat.on('update', insertButton)
+                );
                 liveChat.isEnabled && insertButton();
                 break;
             }
             case 'chatSettingsMenu': {
-                let chatSettingsButtonWrapperEl: HTMLElement | null = null;
+                let chatSettingsBalloonEl: HTMLElement | null = null;
     
                 const insertButton = () => {
-                    if (document.contains(this.rootEl) || !chatSettingsButtonWrapperEl) {
+                    if (document.contains(this.rootEl) || !chatSettingsBalloonEl) {
                         return;
                     }
-                    const chatSettingsContentContainerEl = chatSettingsButtonWrapperEl.querySelector('.chat-settings__content')?.firstElementChild;
+                    const chatSettingsContentContainerEl = chatSettingsBalloonEl.querySelector('.chat-settings__content')?.firstElementChild;
                     if (
                         chatSettingsContentContainerEl && 
-                        !chatSettingsButtonWrapperEl.querySelector('.chat-settings__back-icon-container > button')
+                        !chatSettingsBalloonEl.querySelector('.chat-settings__back-icon-container > button')
                     ) {
                         if (
                             chatSettingsContentContainerEl.getAttribute('data-a-target') === 'chat-settings-mod-view' &&
@@ -66,23 +75,48 @@ class ChatLogViewWindowOpenButtonManager {
                 };
     
                 const chatSettingsMenuObserver = new MutationObserver(insertButton);
-                this.mutationObservers = [chatSettingsMenuObserver];
     
                 const setChatSettingsMenuObserver = () => {
-                    if (document.contains(chatSettingsButtonWrapperEl)) return;
-    
+                    if (document.contains(chatSettingsBalloonEl)) return;
+
                     chatSettingsMenuObserver.disconnect();
-    
-                    const chatSettingsButtonEl = document.querySelector('button[data-a-target="chat-settings"]');
-                    chatSettingsButtonWrapperEl = chatSettingsButtonEl?.parentElement?.parentElement?.parentElement || null;
-    
-                    if (chatSettingsButtonWrapperEl) {
-                        chatSettingsMenuObserver.observe(chatSettingsButtonWrapperEl, { childList: true, subtree: true });
-                        insertButton();
+
+                    chatSettingsBalloonEl = document.querySelector('.tw-dialog-layer div[data-a-target="chat-settings-balloon"]');
+
+                    if (!chatSettingsBalloonEl) return;
+
+                    chatSettingsMenuObserver.observe(chatSettingsBalloonEl, { childList: true, subtree: true });
+                    insertButton();
+                };
+
+                const dialogObserver = new MutationObserver(setChatSettingsMenuObserver);
+
+                let isObservingDialog = false;
+
+                const observeLayer = () => {
+                    if (!isObservingDialog) {
+                        dialogObserver.observe(document.body, { childList: true });
+                        setChatSettingsMenuObserver();
+                        isObservingDialog = true;
                     }
                 };
-                this.removeLiveChatListener = liveChat.on('update', setChatSettingsMenuObserver);
-                liveChat.isEnabled && setChatSettingsMenuObserver();
+
+                this.unsubscribers.push(
+                    liveChat.on('update', observeLayer),
+                    liveChat.on('destroy', (isPermanent) => {
+                        if (isPermanent) {
+                            dialogObserver.disconnect();
+                            isObservingDialog = false;
+                        }
+                    })
+                );
+                liveChat.isEnabled && observeLayer();
+
+                this.mutationObservers.push(
+                    chatSettingsMenuObserver, 
+                    dialogObserver 
+                );
+
                 break;
             }
             default:
