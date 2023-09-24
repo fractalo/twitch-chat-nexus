@@ -93,7 +93,7 @@ class ChatLogViewWindowOpenButtonManager {
 
                 let isObservingDialog = false;
 
-                const observeLayer = () => {
+                const observeDialog = () => {
                     if (!isObservingDialog) {
                         dialogObserver.observe(document.body, { childList: true });
                         setChatSettingsMenuObserver();
@@ -102,7 +102,7 @@ class ChatLogViewWindowOpenButtonManager {
                 };
 
                 this.unsubscribers.push(
-                    liveChat.on('update', observeLayer),
+                    liveChat.on('update', observeDialog),
                     liveChat.on('destroy', (isPermanent) => {
                         if (isPermanent) {
                             dialogObserver.disconnect();
@@ -110,7 +110,7 @@ class ChatLogViewWindowOpenButtonManager {
                         }
                     })
                 );
-                liveChat.isEnabled && observeLayer();
+                liveChat.isEnabled && observeDialog();
 
                 this.mutationObservers.push(
                     chatSettingsMenuObserver, 
