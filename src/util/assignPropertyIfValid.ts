@@ -1,4 +1,4 @@
-import { isRecord } from "./SafeAny"
+import { isRecord } from "./typePredicates"
 
 export const assignPropertyIfValid = <T>(obj: unknown, property: string, value: T): boolean => {
     if (
