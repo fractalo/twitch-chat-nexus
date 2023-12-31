@@ -1,28 +1,31 @@
 import i18next, {type LanguageDetectorModule} from "i18next";
-import LanguageDetector from './languageDetectors/browser';
 import resources from 'virtual:i18next-loader';
 import { createI18nStore } from "svelte-i18next";
 
+interface Config {
+    languageDetector: LanguageDetectorModule;
+    language?: string;
+}
 
 let didInitialization = false;
 
-export const initI18next = (languageDetector: LanguageDetectorModule = LanguageDetector) => {
+export const initI18next = (config: Config) => {
     if (didInitialization) {
         return i18next;
     }
 
     i18next
-    .use(languageDetector)
+    .use(config.languageDetector)
     .init({
         resources,
         supportedLngs: ['en', 'ko'],
         fallbackLng: 'en',
-        ns: ['common', 'translation', 'settings'],
-        defaultNS: 'translation',
+        defaultNS: 'common',
         interpolation: {
             escapeValue: false,
         },
         returnNull: false,
+        lng: config.language
     });
 
     didInitialization = true;
