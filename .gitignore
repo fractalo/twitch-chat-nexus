@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+dist.zip
+public/scripts
+dist-*/
+dist-*.zip
