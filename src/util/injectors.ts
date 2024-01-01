@@ -1,7 +1,9 @@
-export function injectScript(path: string) {
+export function injectScript(path: string, type?: 'module') {
     const scriptEl = document.createElement('script');
-    scriptEl.src = chrome.runtime.getURL(path);
-    scriptEl.type = 'module';
+    scriptEl.src = path;
+    if (type) {
+        scriptEl.type = type;
+    }
     scriptEl.addEventListener('load', () => scriptEl.remove());
     (document.head || document.documentElement).prepend(scriptEl);
 }
