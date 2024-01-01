@@ -1,17 +1,12 @@
-import { Messaging } from "src/components/Messaging"
-import { ScriptIds } from "src/constants/scripts";
+import { Messaging, SCRIPT_IDS } from "src/messaging";
 
 
-const messaging = new Messaging(ScriptIds.INJECTED_INTERCEPTOR);
+const messaging = new Messaging(SCRIPT_IDS.INJECTED_INTERCEPTOR);
 
 messaging.on('message', (message) => {
-    if (message.from !== ScriptIds.CONTENT) return;
+    if (message.from !== SCRIPT_IDS.CONTENT) return;
 
     switch (message.type) {
-        case 'SETTINGS': {
-            
-            break;
-        }
         default:
     }
 });
