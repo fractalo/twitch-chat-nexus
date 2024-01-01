@@ -24,3 +24,39 @@
 .simplebar-scrollbar::before {
   background-color: #a0a0a6;
 }
+
+.menu-primary li>*:not(ul):not(.menu-title):not(details):active, 
+.menu-primary li>*:not(ul):not(.menu-title):not(details).active, 
+.menu-primary li>details>summary:active {
+  @apply bg-primary
+}
+
+.menu li > .submenu-toggle:not(.active):active,
+.menu li > .menu-dropdown-toggle:active {
+  @apply bg-base-content/[0.2] text-base-content
+}
+
+.label-text {
+  @apply font-semibold
+}
+
+
+/* floating-ui tooltip */
+[data-theme="light"] .floating-tooltip {
+  @apply bg-gray-900 text-gray-50
+} 
+[data-theme="dark"] .floating-tooltip {
+  @apply bg-gray-500 text-white
+} 
+
+
+.menu li > *:not(.active):has(.menu-tools:active):not(ul):not(.menu-title):not(details):active {
+  background-color: var(--fallback-bc, oklch(var(--bc)/0.1));
+  --tw-text-opacity: 1;
+  color: var(--fallback-bc, oklch(var(--bc) / var(--tw-text-opacity)));
+}
+
+.menu li > *:not(.active):has(.menu-tools .menu:hover):not(ul):not(.menu-title):not(details):hover {
+  background-color: inherit; 
+  color: inherit;
+}

@@ -3,7 +3,7 @@ module.exports = {
   content: [
     './src/components/**/*.{html,js,svelte,ts}',
     './src/options/**/*.{html,js,svelte,ts}',
-    './src/popup/**/*.{html,js,svelte,ts}'
+    './src/popup/**/*.{html,js,svelte,ts}',
   ],
   theme: {
     extend: {},
@@ -47,6 +47,6 @@ module.exports = {
         }
       }
     ],
-    darkTheme: null,
+    darkTheme: false,
   },
 }
