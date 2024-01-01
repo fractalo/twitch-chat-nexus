@@ -3,6 +3,35 @@
 @tailwind components;
 @tailwind utilities;
 
+.daisy-btn {
+    @apply no-animation;
+}
+
+.daisy-btn:active:hover,
+.daisy-btn:active:focus {
+    transform: none;
+}
+
+.daisy-checkbox {
+    border-style: solid;
+    border-radius: var(--border-radius-small);
+}
+
+.daisy-checkbox-primary {
+    border-color: var(--color-border-input-checkbox);
+}
+
+.daisy-checkbox-primary:hover {
+    border-color: var(--color-border-input-checkbox-hover);
+}
+
+.daisy-checkbox-primary:checked,
+.daisy-checkbox-primary:indeterminate {
+    --chkbg: var(--color-background-input-checkbox-checked);
+    border-color: var(--color-border-input-checkbox-checked);
+    background-color: var(--chkbg);
+}
+
 .daisy-toggle {
     border-width: 2px;
     border-style: solid;
@@ -11,12 +40,27 @@
     background-color: var(--color-border-toggle);
 }
 
-.daisy-toggle:checked {
+.daisy-toggle:hover {
+    background-color: var(--color-border-toggle-hover);
+}
+
+.daisy-toggle-primary:checked {
     background-color: var(--color-border-toggle-checked);
     --tglbg: var(--color-background-toggle-checked);
 }
 
-.daisy-select {
+.daisy-select,
+.daisy-label-text {
+    font: inherit;
+}
+
+.daisy-input {
+    font-size: var(--input-text-default);
+}
+
+.daisy-select,
+.daisy-input {
+    font-weight: 400;
     background-clip: padding-box;
     border-width: var(--border-width-input-none);
     border-radius: 0.4rem;
@@ -27,21 +71,63 @@
     transition: border var(--timing-short) ease-in, background-color var(--timing-short) ease-in;
 }
 
-.daisy-select:hover {
+.daisy-select:hover,
+.daisy-input:hover {
     outline: none;
     border-color: var(--color-border-input-hover);
     box-shadow: inset 0 0 0 var(--border-width-input) var(--color-border-input-hover);
     background-color: var(--color-background-input);
 }
 
-.daisy-select:focus {
+.daisy-select:focus,
+.daisy-input:focus {
     border-color: var(--color-border-input-focus);
     background-color: var(--color-background-input-focus);
     box-shadow: 0 0 0 var(--border-width-input) var(--color-border-input-focus), 
         inset 0 0 0 var(--border-width-input) var(--color-border-input-focus);
 }
 
+.daisy-form-control {
+    padding: 0.5rem;
+}
+
 option {
     background-color: var(--color-background-input-focus);
 }
 
+.tcn-chat-split-animate-normal {
+    transition: width 250ms ease, height 250ms ease;
+}
+
+.tcn-chat-split-animate-slow {
+    transition: width 500ms ease-in, height 500ms ease-in;
+}
+
+.tcn-card {
+    background-color: var(--color-background-base);
+    box-shadow: var(--shadow-elevation-2);
+}
+
+.tcn-card-title {
+    color: var(--color-text-alt);
+    font-size: var(--font-size-5);
+    font-weight: var(--font-weight-semibold);
+}
+
+.tcn-card-title-sm {
+    color: var(--color-text-alt);
+    font-size: var(--font-size-6);
+    font-weight: var(--font-weight-semibold);
+}
+
+.tcn-card-button-group {
+    background-color: var(--color-background-alt-2);
+  }
+
+.tcn-card-handle {
+    @apply cursor-move;
+}
+
+.tcn-card-drag-cancel {
+    @apply cursor-default;
+}
