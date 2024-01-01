@@ -1,7 +1,7 @@
 import { sha256 } from 'crypto-hash';
 import query from './query.gql?raw';
 import type { GqlRequest } from '../../types';
-import { isRecord } from 'src/util/SafeAny';
+import { isRecord } from 'src/util/typePredicates';
 
 const queryHash = sha256(query);
 
@@ -18,7 +18,7 @@ export interface ModLogsMessagesGqlRequest extends GqlRequest {
 
 export const createModLogsMessagesRequest = async(variables: Variables): Promise<ModLogsMessagesGqlRequest> => {
     return {
-        operationName: `TCH_ViewerCardModLogsMessagesBySender`,
+        operationName: `TCN_ViewerCardModLogsMessagesBySender`,
         extensions: {
             persistedQuery: {
                 sha256Hash: (await queryHash),

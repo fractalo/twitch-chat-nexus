@@ -4,8 +4,7 @@ import './modules/ChatLogView';
 import messaging from './messaging';
 import { clientGetters } from './clients';
 
-
-window.__TCH_preloaded ??= {};
-window.__TCH_preloaded.clients = Object.freeze(clientGetters);
+window.__TCN_preloaded ??= {};
+window.__TCN_preloaded.clients = Object.freeze(clientGetters);
 
 messaging.postMessage({ type: "LOADED" });

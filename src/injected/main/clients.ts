@@ -4,18 +4,18 @@ import type { ClientGetters } from "../interceptor/clients";
 
 
 const clientGettersPromise = new Promise<ClientGetters>((resolve) => {
-    if (window?.__TCH_preloaded?.clients) {
-        resolve(window.__TCH_preloaded.clients);
+    if (window?.__TCN_preloaded?.clients) {
+        resolve(window.__TCN_preloaded.clients);
         return;
     }
     const removeMessageListener = messaging.on('message', (message) => {
         if (
             message.from === ScriptIds.INJECTED_INTERCEPTOR &&
             message.type === 'LOADED' &&
-            window?.__TCH_preloaded?.clients
+            window?.__TCN_preloaded?.clients
         ) {
             removeMessageListener();
-            resolve(window.__TCH_preloaded.clients);
+            resolve(window.__TCN_preloaded.clients);
         }
     });
 });
