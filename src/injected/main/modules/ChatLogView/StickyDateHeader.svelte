@@ -177,8 +177,8 @@
 
 {#if isVisible && currentDateSeparator}
   <div class="absolute w-full h-0 mt-[0.3rem] z-10" in:fade={{duration: 200, easing: sineInOut}} out:fade={{duration: 300}}>
-    <div id="tch-dateHeader-wrapper" class="mx-auto w-fit">
-      <button id="tch-dateHeader-btn" class="daisy-btn min-h-[2.2rem] h-[2.2rem] font-normal no-animation"
+    <div id="tcn-dateHeader-wrapper" class="mx-auto w-fit">
+      <button id="tcn-dateHeader-btn" class="daisy-btn min-h-[2.2rem] h-[2.2rem] font-normal no-animation"
         on:click={handleClick}
         on:mouseenter={handleMouseenter}
         on:mouseleave={handleMouseleave}
@@ -191,17 +191,17 @@
 
 
 <style>
-  #tch-dateHeader-wrapper {
+  #tcn-dateHeader-wrapper {
     background-color: var(--color-background-overlay-alt);
     color: var(--color-text-overlay);
   }
 
-  #tch-dateHeader-wrapper {
+  #tcn-dateHeader-wrapper {
     background-color: var(--color-background-overlay-alt);
     color: var(--color-text-overlay);
   }
 
-  #tch-dateHeader-btn {
+  #tcn-dateHeader-btn {
     border-width: 0px;
     border-radius: var(--border-radius-medium);
     font-size: var(--button-text-default);
@@ -211,11 +211,11 @@
     color: var(--color-text-button-overlay-text);
   }
 
-  #tch-dateHeader-btn:hover {
+  #tcn-dateHeader-btn:hover {
     background-color: var(--color-background-button-overlay-text-hover);
   }
 
-  #tch-dateHeader-btn:active {
+  #tcn-dateHeader-btn:active {
     background-color: var(--color-background-button-overlay-text-active);
   }
 
