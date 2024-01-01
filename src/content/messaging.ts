@@ -1,25 +1,34 @@
-import { Messaging } from "src/components/Messaging";
-import { ScriptIds } from "src/constants/scripts";
-import { getSettingValues } from "src/components/settings";
+import { Messaging, SCRIPT_IDS } from "src/messaging";
+import { getSettingValues, getAllSettingValues } from "src/components/settings/utils";
+import { getAllChatFilterGroupsRuntime } from "src/components/chatFilter/utils";
 
 
-const messaging = new Messaging(ScriptIds.CONTENT);
+const messaging = new Messaging(SCRIPT_IDS.CONTENT);
 
-messaging.on('connect', () => {
-    getSettingValues()
-    .then((settingValues) => {
-        messaging.postMessage({ type: "SETTINGS", content: settingValues });
-    });
-});
-
-
-// from injected scripts
-messaging.on('message', (message) => {
+messaging.on('message', async(message) => {
     switch (message.type) {
         case 'GET_SETTINGS': {
-            getSettingValues()
-            .then((settingValues) => {
-                messaging.postMessage({ type: "SETTINGS", content: settingValues });
+            const settingValueGroups = await getSettingValues(message.content);
+            messaging.postMessage({ type: "SETTINGS", content: { [message.content]: settingValueGroups } });
+            break;
+        }
+        case 'GET_ALL_SETTINGS': {
+            const settingValueGroupsRecord = await getAllSettingValues();
+            messaging.postMessage({
+                type: "SETTINGS",
+                content: settingValueGroupsRecord,
+                to: message.from,
+                contextId: message.contextId
+            });
+            break;
+        }
+        case 'GET_ALL_CHAT_FILTER_GROUPS': {
+            const chatFilterGroupsRuntime = await getAllChatFilterGroupsRuntime();
+            messaging.postMessage({
+                type: "CHAT_FILTER_GROUPS",
+                content: chatFilterGroupsRuntime,
+                to: message.from,
+                contextId: message.contextId
             });
             break;
         }
@@ -42,11 +51,32 @@ messaging.on('message', (message) => {
             messaging.postMessage({ type: 'LANGUAGE', content: chrome.i18n.getUILanguage() });
             break;
         }
+        case 'GET_RUNTIME_URL': {
+            messaging.postMessage({
+                type: "RUNTIME_URL",
+                content: chrome.runtime.getURL(message.content),
+                to: message.from,
+                contextId: message.contextId
+            });
+            break;
+        }
+        case 'OPEN_OPTIONS_PAGE': {
+            chrome.runtime.sendMessage('OPEN_OPTIONS_PAGE');
+            break;
+        }
+        case 'GET_APP_VERSION': {
+            messaging.postMessage({
+                type: "APP_VERSION",
+                content: chrome.runtime.getManifest().version,
+                to: message.from,
+                contextId: message.contextId
+            });
+            break;
+        }
         default:
     }
 });
 
-// from background
 chrome.runtime.onMessage.addListener((message, sender) => {
     if (sender.id !== chrome.runtime.id) {
         return;
