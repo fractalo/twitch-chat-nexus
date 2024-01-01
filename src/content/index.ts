@@ -1,27 +1,18 @@
 // https://dev.to/jacksteamdev/advanced-config-for-rpce-3966
-
-import styles from './styles.css?inline';
-import injectedMain from '../injected/main?script&module';
+import styles from "./styles.css?inline";
+import injectedMain from "src/injected/main?script&module";
 import { injectInlineStyle, injectScript } from "src/util/injectors";
-import { type MainCategorySettingValues } from 'src/components/settings';
-import messaging from './messaging';
+import { isInAllowedFrame } from "src/util/isInAllowedFrame";
 
+(async() => {
+    if (!isInAllowedFrame()) {
+        return;
+    }
 
-injectInlineStyle(styles);
+    injectInlineStyle(styles);
+    injectScript(chrome.runtime.getURL(injectedMain), 'module');
 
-injectScript(injectedMain);
+    import("./messaging");
+    import("./storage");
 
-
-
-/** post updated setting values */
-chrome.storage.local.onChanged.addListener((changes) => {
-    const newSettingValues = changes.settings?.newValue as MainCategorySettingValues | undefined;
-    if (!newSettingValues) return;
-
-    messaging.postMessage({ type: "SETTINGS", content: newSettingValues });
-});
-
-
-
-
-
+})();
