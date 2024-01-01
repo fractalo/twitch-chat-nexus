@@ -1,19 +1,5 @@
-import { Messaging } from "src/components/Messaging"
-import { ScriptIds } from "src/constants/scripts";
-import { settingValuesStore } from "./stores";
+import { Messaging, SCRIPT_IDS } from "src/messaging";
 
-const messaging = new Messaging(ScriptIds.INJECTED_MAIN);
-
-messaging.on('message', (message) => {
-    if (message.from !== ScriptIds.CONTENT) return;
-
-    switch (message.type) {
-        case 'SETTINGS': {
-            settingValuesStore.set(message.content);
-            break;
-        }
-        default:
-    }
-});
+const messaging = new Messaging(SCRIPT_IDS.INJECTED_MAIN);
 
 export default messaging;
