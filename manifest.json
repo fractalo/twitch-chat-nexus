@@ -22,11 +22,14 @@
         "scripting"
     ],
     "background": {
-        "service_worker": "src/background/index.ts"
+        "service_worker": "src/background/index.ts",
+        "scripts": [
+            "src/background/index.ts"
+        ]
     },
     "options_ui": {
         "page": "src/options/index.html",
-        "open_in_tab": false
+        "open_in_tab": true
     },
     "content_scripts": [
         {
@@ -34,6 +37,15 @@
             "js": ["src/content/index.ts"],
             "run_at": "document_start",
             "all_frames": true
+        }
+    ],
+    "web_accessible_resources": [
+        {
+            "matches": ["*://*.twitch.tv/*"],
+            "resources": [
+                "scripts/interceptor.js",
+                "src/assets/logo.png"
+            ]
         }
     ]
 }

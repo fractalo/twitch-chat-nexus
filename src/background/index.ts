@@ -1,12 +1,15 @@
 
+/**
+ * to bypass async loader of crxjs
+ * https://github.com/crxjs/chrome-extension-tools/issues/391
+ */
 chrome.scripting.registerContentScripts([
     {
-        id: "tch_injected_interceptor",
-        js: ['interceptor.js'],
+        id: "tcn_early_injector",
+        js: ['earlyInjector.js'],
         matches: ["*://*.twitch.tv/*"],
         runAt: "document_start",
         allFrames: true,
-        world: "MAIN",
     }
 ]);
 
