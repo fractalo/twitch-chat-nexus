@@ -1,4 +1,4 @@
-import { ScriptIds } from "src/constants/scripts";
+import { SCRIPT_IDS } from "src/messaging";
 import messaging from "./messaging";
 import type { ClientGetters } from "../interceptor/clients";
 
@@ -10,7 +10,7 @@ const clientGettersPromise = new Promise<ClientGetters>((resolve) => {
     }
     const removeMessageListener = messaging.on('message', (message) => {
         if (
-            message.from === ScriptIds.INJECTED_INTERCEPTOR &&
+            message.from === SCRIPT_IDS.INJECTED_INTERCEPTOR &&
             message.type === 'LOADED' &&
             window?.__TCN_preloaded?.clients
         ) {
