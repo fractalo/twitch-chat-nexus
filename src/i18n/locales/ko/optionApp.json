@@ -1,0 +1,180 @@
+{
+    "error": {
+        "jsonParseError": "JSON 형식의 파일이 아닙니다.",
+        "fileReadError": "파일 읽기 오류",
+        "invalidDataFormat": "데이터 형식이 잘못되었습니다.",
+        "cannotReadAnyFilterGroups": "필터 그룹을 읽을 수 없습니다.",
+        "cannotReadSomeFilterGroups": "일부 필터 그룹을 읽을 수 없습니다."
+    },
+
+    "warning": {
+        "filterGroupNotExists": "대상 필터 그룹이 존재하지 않습니다.",
+        "chatFilterNotExists": "해당 채팅 필터가 존재하지 않습니다.",
+        "invalidUsernameFormat": "아이디는 영숫자 또는 언더바(_)로 이루어져야 합니다."
+    },
+
+    "openInNewTab": "새 탭에서 열기",
+
+    "helpLanguage": "korean",
+    "rateExtension": "평가하기",
+
+    "sidebar": {
+        "chatLogViewSettings": "$t(settings:chatLogView._self)",
+        "chatIndicatorSettings": "$t(settings:chatIndicator._self)",
+        "filteredChatView": "$t(settings:filteredChatView._self)",
+        "settings": "$t(common:settings)",
+        "filterEditor": "필터 편집기"
+    },
+
+    "chatFilterEditor": "채팅 필터 편집기",
+    "filterGroupList": "필터 그룹 목록",
+
+    "sortBy": {
+        "name": "이름순",
+        "large": "크기순",
+        "lastModified": "최근 수정순"
+    },
+
+    "chatFilterGroup": {
+        "enabled": "활성",
+        "disabled": "비활성",
+        "appliedChannels": "적용 채널",
+        "allChannels": "$t(common:allChannels)",
+        "someChannels": "$t(common:someChannels)",
+        "username": "아이디"
+    },
+
+    "chatFilter": {
+        "enabled": "활성",
+        "disabled": "비활성",
+        "filterType": "필터 유형",
+        "include": "포함",
+        "exclude": "제외",
+        "badgeSet": "배지"
+    },
+
+    "chatBadge": {
+        "broadcaster": {
+            "set": "스트리머"
+        },
+        "moderator": {
+            "set": "매니저"
+        },
+        "subscriber": {
+            "set": "정기구독자",
+            "version": "{{count}}개월",
+            "withUnit": "{{value}} 개월"
+        },
+        "founder": {
+            "set": "개설자"
+        },
+        "bits": {
+            "set": "비트",
+            "withUnit": "cheer {{value}}"
+        },
+        "bits-leader": {
+            "set": "비트 리더",
+            "version": {
+                "1": "비트 리더 1위",
+                "2": "비트 리더 2위",
+                "3": "비트 리더 3위"
+            }
+        },
+        "sub-gifter": {
+            "set": "정기구독권 선물",
+            "version_default": "정기구독권 선물 구매자",
+            "version": "정기구독권 선물 {{count}}개",
+            "withUnit": "정기구독권 선물 {{value}} 개"
+        },
+        "sub-gift-leader": {
+            "set": "정기구독권 선물 리더"
+        },
+        "hype-train": {
+            "set": "후원 열차",
+            "version": {
+                "1": "현재 후원 열차 차장",
+                "2": "이전 후원 열차 차장"
+            }
+        },
+        "turbo": {
+            "set": "터보"
+        },
+        "predictions": {
+            "set": "예측",
+            "version": {
+                "blue-1": "예측 블루 (1)",
+                "blue-2": "예측 블루 (2)",
+                "blue-3": "예측 블루 (3)",
+                "blue-4": "예측 블루 (4)",
+                "blue-5": "예측 블루 (5)",
+                "blue-6": "예측 블루 (6)",
+                "blue-7": "예측 블루 (7)",
+                "blue-8": "예측 블루 (8)",
+                "blue-9": "예측 블루 (9)",
+                "blue-10": "예측 블루 (10)",
+                "pink-1": "예측 핑크 (1)",
+                "pink-2": "예측 핑크 (2)"
+            }
+        },
+        "no_audio": {
+            "set": "오디오 없이 시청"
+        },
+        "no_video": {
+            "set": "소리만 듣기"
+        },
+        "partner": {
+            "set": "인증 완료"
+        },
+        "admin": {
+            "set": "관리자"
+        },
+        "staff": {
+            "set": "스태프"
+        },
+        "global_mod": {
+            "set": "글로벌 매니저"
+        },
+        "extension": {
+            "set": "확장 프로그램"
+        },
+        "anonymous-cheerer": {
+            "set": "익명의 응원"
+        },
+        "moments": {
+            "withUnit": "Tier {{value}}"
+        }
+    },
+
+    "chatBadgeGroup": {
+        "channel": "채널 배지",
+        "twitch": "Twitch 배지",
+        "special": "특수 배지",
+        "others": "기타 배지"
+    },
+
+    "username": "아이디",
+    "displayName": "닉네임",
+
+    "noSelectedChannels": "선택된 채널 없음",
+
+    "noFilterGroup": "필터 그룹이 없습니다",
+
+    "allSubscriptionTiers": "모든 구독 티어",
+    "selectedSubscriptionTiers": "선택된 구독 티어",
+    "allSubscriptionMonths": "모든 구독 개월 수",
+    "selectedSubscriptionMonths": "선택된 구독 개월 수",
+    "withSubscriberBadge": "구독자 배지 소유",
+    "withoutSubscriberBadge": "구독자 배지 미소유",
+
+    "importFilterGroup": "필터 그룹 가져오기",
+    "newFilterGroup": "새 필터 그룹",
+    "editFilterGroup": "필터 그룹 편집",
+    "deleteFilterGroup": "필터 그룹 삭제",
+
+    "newChatFilter": "새 채팅 필터",
+    "editChatFilter": "채팅 필터 편집",
+    "deleteChatFilter": "채팅 필터 삭제",
+
+    "askIfDeleteFilterGroups": "{{count}}개의 필터 그룹을 삭제하시겠습니까?",
+    "askIfDeleteChatFilters": "{{count}}개의 채팅 필터를 삭제하시겠습니까?"
+}

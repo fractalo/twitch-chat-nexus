@@ -36,5 +36,38 @@
             },
             "width": "Width"
         }
+    },
+    "filteredChatView": {
+        "_self": "Filtered Chat View",
+        "general": {
+            "_self": "General",
+            "isEnabled": "Enable Feature"
+        },
+        "behavior": {
+            "_self": "Behavior",
+            "useAutoResize": "Automatic Area Resizing",
+            "collapseAfter": {
+                "_self": "Collapse After Inactive",
+                "unit": " s"
+            },
+            "maxChatMessages": {
+                "_self": "Maximum Chat Messages",
+                "unit": ""
+            }
+        },
+        "appearance": {
+            "_self": "Appearance",
+            "location": {
+                "_self": "Location",
+                "top": "Top",
+                "bottom": "Bottom"
+            },
+            "timestampFormat": {
+                "_self": "Timestamp Format",
+                "hidden": "Hidden",
+                "12h": "12 Hour",
+                "24h": "24 Hour"
+            }
+        }
     }
 }

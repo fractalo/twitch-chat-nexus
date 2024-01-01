@@ -1,3 +1,81 @@
 {
-    "settings": "설정"
+    "settings": "설정",
+    "refresh": "새로고침",
+    "search": "검색",
+    "all": "전체",
+    "help": "도움말",
+    "edit": "편집",
+    "complete": "완료",
+    "close": "닫기",
+    "sortBy": "정렬 기준",
+    "modify": "수정",
+    "delete": "삭제",
+    "deleteAll": "전체 삭제",
+    "import": "가져오기",
+    "export": "내보내기",
+    "include": "포함",
+    "exclude": "제외",
+    "reset": "초기화",
+    "add": "추가",
+    "cancel": "취소",
+    "create": "만들기",
+    "save": "저장",
+    "category": "카테고리",
+    "language": "언어",
+
+    "username": "사용자명",
+    "keyword": "키워드",
+    "badge": "배지",
+
+    "description": "설명",
+    "new": "신규",
+    "filters": "필터",
+
+    "filterCount": "필터 개수",
+    "filterType": "필터 유형",
+
+    "enable": "활성화",
+    "disable": "비활성화",
+
+    "selectAll": "전체 선택",
+    "deselectAll": "전체 해제",
+    "nSelected": "{{count}}개 선택함",
+
+    "nItems": "{{count}}개 항목",
+    
+    "nFilters": "{{count}}개의 필터",
+
+    "nChannels": "{{count}}개 채널",
+
+    "nTiers": "티어 {{tier}}",
+
+    "nVersions": "{{count}}개 버전",
+    "nVersionRanges": "{{count}}개 버전 범위",
+
+    "allChannels": "모든 채널",
+    "selectedChannels": "선택된 채널",
+    "someChannels": "일부 채널",
+
+    "groupName": "그룹 이름",
+
+    "selectBadge": "배지 선택",
+    "selectVersion": "버전 선택",
+
+    "allVersions": "모든 버전",
+    "selectedVersions": "선택된 버전",
+
+    "single": "단일",
+    "range": "범위",
+    "min": "최소",
+    "max": "최대",
+
+    "months": "개월",
+
+    "modifiedAt": "수정한 날짜",
+    "timestamp": "타임스탬프",
+
+    "resetToDefault": "기본값으로 초기화",
+
+    "confirm": "확인",
+    "status": "상태"
 }

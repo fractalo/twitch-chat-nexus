@@ -1,0 +1,120 @@
+{
+    "error": {
+        "jsonParseError": "The file is not in JSON format.",
+        "fileReadError": "File read error",
+        "invalidDataFormat": "Invalid data format",
+        "cannotReadAnyFilterGroups": "No filter groups can be read.",
+        "cannotReadSomeFilterGroups": "Some filter groups cannot be read."
+    },
+
+    "warning": {
+        "filterGroupNotExists": "Target filter group does not exist.",
+        "chatFilterNotExists": "This chat filter does not exist.",
+        "invalidUsernameFormat": "Usernames must only contain alphanumeric and underscore characters."
+    },
+
+    "openInNewTab": "Open in new tab",
+
+    "helpLanguage": "english",
+    "rateExtension": "Rate",
+
+    "sidebar": {
+        "chatLogViewSettings": "$t(settings:chatLogView._self)",
+        "chatIndicatorSettings": "$t(settings:chatIndicator._self)",
+        "filteredChatView": "$t(settings:filteredChatView._self)",
+        "settings": "$t(common:settings)",
+        "filterEditor": "Filter Editor"
+    },
+
+    "chatFilterEditor": "Chat Filter Editor",
+    "filterGroupList": "Filter Group List",
+
+    "sortBy": {
+        "name": "By Name",
+        "large": "By Size",
+        "lastModified": "Last Modified"
+    },
+
+    "chatFilterGroup": {
+        "enabled": "Enabled",
+        "disabled": "Disabled",
+        "appliedChannels": "Applied Channels",
+        "allChannels": "All",
+        "someChannels": "Some",
+        "username": "Username"
+    },
+
+    "chatFilter": {
+        "enabled": "Enabled",
+        "disabled": "Disabled",
+        "filterType": "Filter Type",
+        "include": "Include",
+        "exclude": "Exclude",
+        "badgeSet": "Badge"
+    },
+
+    "chatBadge": {
+        "subscriber": {
+            "set": "Subscriber",
+            "version_one": "{{count}} Month",
+            "version_other": "{{count}} Months",
+            "withUnit": "{{value}} Months"
+        },
+        "bits": {
+            "set": "Bits",
+            "withUnit": "cheer {{value}}"
+        },
+        "bits-leader": {
+            "set": "Bits Leader"
+        },
+        "sub-gifter": {
+            "set": "Sub Gifter",
+            "withUnit": "{{value}} Gift Subs"
+        },
+        "sub-gift-leader": {
+            "set": "Sub Gift Leader"
+        },
+        "hype-train": {
+            "set": "Hype Train"
+        },
+        "predictions": {
+            "set": "Predictions"
+        },
+        "moments": {
+            "withUnit": "Tier {{value}}"
+        }
+    },
+
+    "chatBadgeGroup": {
+        "channel": "Channel Badges",
+        "twitch": "Twitch Badges",
+        "special": "Special Badges",
+        "others": "Other Badges"
+    },
+
+    "username": "Username",
+    "displayName": "Display Name",
+
+    "noSelectedChannels": "No Selected Channels",
+
+    "noFilterGroup": "No Filter Group",
+
+    "allSubscriptionTiers": "All Subscription Tiers",
+    "selectedSubscriptionTiers": "Selected Subscription Tiers",
+    "allSubscriptionMonths": "All Subscription Months",
+    "selectedSubscriptionMonths": "Selected Subscription Months",
+    "withSubscriberBadge": "With Subscriber Badge",
+    "withoutSubscriberBadge": "Without Subscriber Badge",
+
+    "importFilterGroup": "Import Filter Group",
+    "newFilterGroup": "New Filter Group",
+    "editFilterGroup": "Edit Filter Group",
+    "deleteFilterGroup": "Delete Filter Group",
+
+    "newChatFilter": "New Chat Filter",
+    "editChatFilter": "Edit Chat Filter",
+    "deleteChatFilter": "Delete Chat Filter",
+
+    "askIfDeleteFilterGroups": "Are you sure you want to delete {{count}} filter groups?",
+    "askIfDeleteChatFilters": "Are you sure you want to delete {{count}} chat filters?"
+}

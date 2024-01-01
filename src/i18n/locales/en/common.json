@@ -1,3 +1,89 @@
 {
-    "settings": "Settings"
+    "settings": "Settings",
+    "refresh": "Refresh",
+    "search": "Search",
+    "all": "All",
+    "help": "Help",
+    "edit": "Edit",
+    "complete": "Complete",
+    "close": "Close",
+    "sortBy": "Sort By",
+    "modify": "Modify",
+    "delete": "Delete",
+    "deleteAll": "Delete All",
+    "import": "Import",
+    "export": "Export",
+    "include": "Include",
+    "exclude": "Exclude",
+    "reset": "Reset",
+    "add": "Add",
+    "cancel": "Cancel",
+    "create": "Create",
+    "save": "Save",
+    "category": "Category",
+    "language": "Language",
+    
+    "username": "Username",
+    "keyword": "Keyword",
+    "badge": "Badge",
+
+    "description": "Description",
+    "new": "New",
+    "filters": "Filters",
+
+    "filterCount": "Number of filters",
+    "filterType": "Filter Type",
+
+    "enable": "Enable",
+    "disable": "Disable",
+
+    "selectAll": "Select All",
+    "deselectAll": "Deselect All",
+    "nSelected": "{{count}} selected",
+
+    "nItems_one": "{{count}} item",
+    "nItems_other": "{{count}} items",
+
+    "nFilters_one": "{{count}} filter",
+    "nFilters_other": "{{count}} filters",
+    "nFilterGroups_one": "{{count}} filer group",
+    "nFilterGroups_other": "{{count}} filter groups",
+
+    "nChannels_one": "{{count}} channel",
+    "nChannels_other": "{{count}} channels",
+
+    "nTiers": "Tier {{tier}}",
+
+    "nVersions_one": "{{count}} version",
+    "nVersions_other": "{{count}} versions",
+    "nVersionRanges_one": "{{count}} version range",
+    "nVersionRanges_other": "{{count}} version ranges",
+
+    "allChannels": "All Channels",
+    "selectedChannels": "Selected Channels",
+    "someChannels": "Some channels",
+
+    "groupName": "Group Name",
+
+    "selectBadge": "Select Badge",
+    "selectVersion": "Select Version",
+
+    "allVersions": "All Versions",
+    "selectedVersions": "Selected Versions",
+
+    "single": "Single",
+    "range": "Range",
+    "min": "Min",
+    "max": "Max",
+
+    "months": "Months",
+
+    "modifiedAt": "Date modified",
+    "timestamp": "Timestamp",
+
+    "resetToDefault": "Reset to Default",
+
+    "confirm": "Confirm",
+    "status": "Status"
+
 }

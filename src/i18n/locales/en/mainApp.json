@@ -1,0 +1,70 @@
+{
+    "appNotice": {
+        "newFeature": "New Feature",
+        "openOptionsPage": "Open Options Page",
+
+        "highlight": "Twitch Chat History is now renamed to Twitch Chat Nexus.",
+
+        "contents": [
+            "Adds an area to the chat window where you can collect chats of interest. (If the feature is enabled on the options page)",
+            "Automatic area resizing is possible (automatically collapse when inactive for a period of time and expand again when active)",
+            "You can save the filtered chats as an image.",
+            "You can add and edit username / keyword / badge filters using the filter editor."
+        ]
+    },
+
+    "chatLogViewOpeningButton": {
+        "label": "View Chat History",
+        "tooltip": "Chat History"
+    },
+
+    "chatLogView": {
+        "refreshButton": "$t(common:refresh)",
+        "settings": "Chat History Settings",
+        "paginationButtons": {
+            "first": {
+                "label": "First",
+                "tooltip": "First Page"
+            },
+            "previous": {
+                "label": "Previous",
+                "tooltip": "Previous Page"
+            },
+            "next": {
+                "label": "Next",
+                "tooltip": "Next Page"
+            },
+            "last": {
+                "label": "Last",
+                "tooltip": "Last Page"
+            }
+        },
+        "paginationToggle": "Use Pagination",
+        "pageSize": {
+            "label": "Page Size",
+            "suffix": " items"
+        },
+        "chatUsernameToggle": "Hide Username"
+    },
+
+    "filteredChatView": {
+        "share": "Export Filtered Chat",
+        "expand": "Expand",
+        "collapse": "Collapse"
+    },
+
+    "filteredChatShare": {
+        "title": "Export Filtered Chat",
+        "selectByUser": "Select by User",
+        "saveAsImage": "Save As Image",
+        "imageSaveOptions": "Image Save Options",
+        "width": "Width",
+        "timestamp": {
+            "hidden": "Hidden",
+            "12-hour": "12 Hour",
+            "24-hour": "24 Hour"
+        },
+        "scale": "Scale"
+    }
+
+}

@@ -36,5 +36,38 @@
             },
             "width": "너비"
         }
+    },
+    "filteredChatView": {
+        "_self": "채팅 모아보기",
+        "general": {
+            "_self": "일반",
+            "isEnabled": "기능 사용"
+        },
+        "behavior": {
+            "_self": "행동",
+            "useAutoResize": "자동 영역 크기 조절",
+            "collapseAfter": {
+                "_self": "일정 시간 동안 비활성 상태인 경우 최소화",
+                "unit": "초"
+            },
+            "maxChatMessages": {
+                "_self": "최대 채팅 개수",
+                "unit": "개"
+            }
+        },
+        "appearance": {
+            "_self": "외형",
+            "location": {
+                "_self": "위치",
+                "top": "상단",
+                "bottom": "하단"
+            },
+            "timestampFormat": {
+                "_self": "타임스탬프 형식",
+                "hidden": "숨김",
+                "12h": "12시간제",
+                "24h": "24시간제"
+            }
+        }
     }
 }

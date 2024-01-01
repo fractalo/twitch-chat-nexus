@@ -1,0 +1,70 @@
+{
+    "appNotice": {
+        "newFeature": "새로운 기능",
+        "openOptionsPage": "옵션 페이지 열기",
+
+        "highlight": "Twitch Chat History는 이제 Twitch Chat Nexus로 이름이 변경되었습니다.",
+
+        "contents": [
+            "관심 있는 채팅을 모아볼 수 있는 영역을 채팅창에 추가합니다. (옵션 페이지에서 기능이 사용 설정된 경우)",
+            "자동 영역 크기 조절이 가능합니다. (일정 시간 동안 비활성 상태인 경우 영역이 자동으로 접히고, 활성화 시 다시 펼쳐집니다)",
+            "모인 채팅을 이미지로 저장할 수 있습니다.",
+            "필터 편집기를 사용해서 사용자명 / 키워드 / 배지 필터를 추가하고 편집할 수 있습니다."
+        ]
+    },
+
+    "chatLogViewOpeningButton": {
+        "label": "채팅 기록 보기",
+        "tooltip": "채팅 기록"
+    },
+
+    "chatLogView": {
+        "refreshButton": "$t(common:refresh)",
+        "settings": "채팅 기록 설정",
+        "paginationButtons": {
+            "first": {
+                "label": "처음",
+                "tooltip": "첫 페이지"
+            },
+            "previous": {
+                "label": "이전",
+                "tooltip": "이전 페이지"
+            },
+            "next": {
+                "label": "다음",
+                "tooltip": "다음 페이지"
+            },
+            "last": {
+                "label": "마지막",
+                "tooltip": "마지막 페이지"
+            }
+        },
+        "paginationToggle": "페이지별 보기",
+        "pageSize": {
+            "label": "페이지 크기",
+            "suffix": "개씩"
+        },
+        "chatUsernameToggle": "닉네임 숨기기"
+    },
+
+    "filteredChatView": {
+        "share": "채팅 모음 내보내기",
+        "expand": "확장",
+        "collapse": "접기"
+    },
+
+    "filteredChatShare": {
+        "title": "채팅 모음 내보내기",
+        "selectByUser": "사용자별 선택",
+        "saveAsImage": "이미지로 저장",
+        "imageSaveOptions": "이미지 저장 옵션",
+        "width": "너비",
+        "timestamp": {
+            "hidden": "숨김",
+            "12-hour": "12시간제",
+            "24-hour": "24시간제"
+        },
+        "scale": "배율"
+    }
+
+}
