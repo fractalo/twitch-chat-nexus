@@ -1,22 +1,25 @@
 <script lang="ts">
-    import { createEventDispatcher } from 'svelte';
-    import type { SettingValue } from "./types";
+  import { createEventDispatcher } from "svelte";
+  import type { SettingValueEvent, ToggleSetting } from "./types";
 
-    export let value: SettingValue;
-    export let settingName: string;
+  export let settingValue: ToggleSetting["default"];
 
-    const dispatch = createEventDispatcher();
+  export let category: string;
+  export let name: string;
 
+  export let getSettingsI18n: (keys: string[]) => string;
+
+  const dispatch = createEventDispatcher<{ change: SettingValueEvent }>();
 </script>
 
-<label class="label">
-    <span class="label-text">
-        {settingName}
-    </span>
-    {#if typeof value === 'boolean'}
-        <input type="checkbox" class="toggle toggle-primary"
-            bind:checked={value}
-            on:change={() => dispatch('change')}
-        />
-    {/if}
+<label class="label cursor-pointer">
+  <span class="label-text">
+    {getSettingsI18n([category, name])}
+  </span>
+  <input
+    type="checkbox"
+    class="toggle toggle-sm toggle-primary"
+    bind:checked={settingValue}
+    on:change={() => dispatch("change", { category, name, settingValue })}
+  />
 </label>

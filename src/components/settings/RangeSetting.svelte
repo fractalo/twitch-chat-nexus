@@ -1,35 +1,37 @@
 <script lang="ts">
-    import { createEventDispatcher } from 'svelte';
-    import type { SettingValue } from "./types";
+  import { createEventDispatcher } from "svelte";
+  import type { RangeSetting, SettingValueEvent } from "./types";
 
-    export let value: SettingValue;
-    export let settingName: string;
-    export let id: string;
-    export let min: number;
-    export let max: number;
-    export let step: number;
-    export let unit: string | undefined;
+  export let settingValue: RangeSetting["default"];
 
-    const dispatch = createEventDispatcher();
+  export let category: string;
+  export let name: string;
+  export let setting: RangeSetting;
 
+  export let getSettingsI18n: (keys: string[]) => string;
+
+  const id = [category, name].join("-");
+
+  const dispatch = createEventDispatcher<{ change: SettingValueEvent }>();
 </script>
 
 <label for={id} class="label">
-    <span class="label-text">
-        {settingName}
-    </span>
+  <span class="label-text">
+    {getSettingsI18n([category, name])}
+  </span>
 </label>
-{#if typeof value === 'number'}
-    <div class="flex gap-2">
-        <input {id} type="range" class="range range-primary"
-            bind:value={value}
-            on:change={() => dispatch('change')}
-            {min}
-            {max}
-            {step}
-        />
-        <span class="text-sm font-semibold">
-            {`${value}${unit || ''}`}
-        </span>
-    </div>
-{/if}
+<div class="flex gap-2">
+  <input
+    {id}
+    type="range"
+    class="range range-sm range-primary"
+    bind:value={settingValue}
+    on:change={() => dispatch("change", { category, name, settingValue })}
+    min={setting.min}
+    max={setting.max}
+    step={setting.step}
+  />
+  <span class="text-sm font-semibold whitespace-nowrap">
+    {settingValue}{setting.unit || getSettingsI18n([category, name, 'unit'])}
+  </span>
+</div>

@@ -1,102 +1,104 @@
 <script lang="ts">
   import ToggleSetting from "./ToggleSetting.svelte";
   import SelectSetting from "./SelectSetting.svelte";
+  import RangeSetting from "./RangeSetting.svelte";
   import {
     settingDefinitions,
-    getSettingValues
-  } from "./settings";
-  import type { MainCategorySettingValues } from "./types";
-  import RangeSetting from "./RangeSetting.svelte";
+    type SettingDefinitionId,
+  } from "./definitions";
+  import type { Setting, SettingGroups, SettingValueEvent, SettingValueGroups } from "./types";
+  
   import { i18n } from "src/i18n";
   import type { ResourceKey } from "i18next";
+  import { getSettingValues, setSettingValues } from "./utils";
+  import { onDestroy, type ComponentType, type SvelteComponent } from "svelte";
 
-  let settingValues: MainCategorySettingValues | null = null;
+  
+  export let definitionId: SettingDefinitionId;
 
-  getSettingValues().then((values) => (settingValues = values));
+  let settingValues: SettingValueGroups | null = null;
 
-  let currentMenu = Object.keys(settingDefinitions)[0];
+  let settingGroups: SettingGroups;
 
-  const handleChange = () => {
-    chrome.storage.local.set({ settings: settingValues });
-  };
+  getSettingValues(definitionId).then((values) => {
+    settingValues = values;
+  });
 
-  const getSettingsI18n = (keys: string[]) => {
-    const key = keys.join('.');
-    const value: ResourceKey = $i18n.t(key, { 
+  settingGroups = settingDefinitions[definitionId];
+
+  const getSettingsI18n = (keys: string[] = []): string => {
+    const key = [definitionId, ...keys].join('.');
+    const value = $i18n.t(key, { 
       ns: 'settings',
       returnObjects: true,
-      defaultValue: ''
-    });
-    return typeof value === 'string' ? value : value._self; 
+    }) as ResourceKey;
+    return typeof value === 'string' ? value : value._self;  
   };
+
+  let settingTitle: string = getSettingsI18n();
+
+  $: settingTitle = ($i18n, getSettingsI18n());
+  
+  const handleStorageChange: Parameters<typeof chrome.storage.local.onChanged.addListener>[0] = (changes) => {
+    const key = Object.keys(changes).find(key => key === `settings.${definitionId}`);
+    if (!key || !changes[key].newValue) return;
+    settingValues = changes[key].newValue;
+  };
+
+  chrome.storage.local.onChanged.addListener(handleStorageChange);
+
+  const handleChange = (event: CustomEvent<SettingValueEvent>) => {
+    if (!settingValues) return;
+    const {category, name, settingValue} = event.detail;
+    settingValues[category][name] = settingValue;
+    setSettingValues(definitionId, settingValues);
+  };
+
+  const settingComponents: Record<Setting['type'], ComponentType<SvelteComponent>> = {
+    select: SelectSetting,
+    toggle: ToggleSetting,
+    range: RangeSetting,
+  };
+
+  onDestroy(() => {
+    chrome.storage.local.onChanged.removeListener(handleStorageChange);
+  });
 
 </script>
 
-<div class="flex flex-col h-full" >
-  <div class="tabs tabs-boxed bg-base-300 rounded-none">
-    {#each Object.keys(settingDefinitions) as menu}
-      <a
-        href={null}
-        class="tab text-sm {currentMenu === menu ? 'tab-active' : ''} rounded-none"
-        on:click={() => (currentMenu = menu)}
-      >
-        {getSettingsI18n([menu])}
-      </a>
-    {/each}
-  </div>
+{#key $i18n}
+  <div class="max-w-screen-md mx-auto h-full">
+      <div class="flex flex-col gap-4 p-3.5 lg:p-8">
+        <h1 class="text-lg lg:text-xl font-bold">
+          {settingTitle}
+        </h1>
 
-  {#if settingValues}
-    <div class="grow h-0" data-simplebar data-simplebar-auto-hide="false">
-      <div class="flex flex-col gap-4 px-4 py-3">
-        {#each Object.keys(settingDefinitions[currentMenu] || {}) as category (category)}
-          <div class="flex flex-col w-full gap-1">
-            <h2 class="text-base ">
-              {getSettingsI18n([currentMenu, category])}
-            </h2>
-            <div class="card bg-base-200 rounded-box place-items-center p-3 gap-1">
-              {#each Object.entries(settingDefinitions[currentMenu][category]) as [setting, definition] (setting)}
-                <div class="form-control w-full max-w-xs">
-                  {#if definition.type === "select"}
-                    <SelectSetting
-                      bind:value={settingValues[currentMenu][category][setting]}
+        {#if settingValues}
+          {#each Object.entries(settingGroups) as [category, settingGroup] (category)}
+            <div class="flex flex-col w-full gap-1">
+              <h2 class="text-base">
+                {getSettingsI18n([category])}
+              </h2>
+              <div class="card bg-base-200 rounded-box py-2 px-3 gap-2">
+                {#each Object.entries(settingGroup) as [name, setting] (name)}
+                  <div class="form-control w-full">
+                    <svelte:component this={settingComponents[setting.type]} 
+                      settingValue={settingValues[category][name]}
+                      {category}
+                      {name}
+                      {setting}
+                      {getSettingsI18n}
                       on:change={handleChange}
-                      settingName={getSettingsI18n([currentMenu, category, setting])}
-                      id={[currentMenu, category, setting].join('.')}
-                      options={definition.options.map((option) => {
-                        return {
-                          id: option,
-                          name: getSettingsI18n([currentMenu, category, setting, option]),
-                        };
-                      })}
                     />
-                  {:else if definition.type === 'toggle'}
-                    <ToggleSetting
-                      bind:value={settingValues[currentMenu][category][setting]}
-                      on:change={handleChange}
-                      settingName={getSettingsI18n([currentMenu, category, setting])}
-                    />
-                  {:else if definition.type === 'range'}
-                    <RangeSetting
-                      bind:value={settingValues[currentMenu][category][setting]}
-                      on:change={handleChange}
-                      settingName={getSettingsI18n([currentMenu, category, setting])}
-                      id={[currentMenu, category, setting].join('.')}
-                      min={definition.min}
-                      max={definition.max}
-                      step={definition.step}
-                      unit={definition.unit}
-                    />
-                  {/if}
-                </div>
-              {/each}
+                  </div>
+                {/each}
+              </div>
             </div>
-          </div>
-        {/each}
+          {/each}
+        {/if}
       </div>
-    </div>
-  {/if}
-</div>
+  </div>
+{/key}
 
-<style>
 
-</style>
+
