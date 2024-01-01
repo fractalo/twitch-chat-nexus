@@ -1,21 +1,41 @@
 import { waitForDOMReady } from "./waitForDOMReady";
 
-export const waitForSelector = async(selector: string) => {
+export const waitForSelector = async(
+    selector: string,
+    root?: HTMLElement,
+    signal?: AbortSignal
+) => {
     await waitForDOMReady();
 
-    return new Promise<HTMLElement>((resolve) => {
+    const rootNode: Document | HTMLElement = root || document;
+
+    return new Promise<HTMLElement>((resolve, reject) => {
+        if (signal?.aborted) {
+            reject(new Error('Aborted'));
+            return;
+        }
+
         let timeout: number;
         const findElement = () => {
-            const element = document.querySelector<HTMLElement>(selector);
+            const element = rootNode.querySelector<HTMLElement>(selector);
             if (element) {
-                documentObserver.disconnect();
+                mutationObserver.disconnect();
                 clearTimeout(timeout);
                 resolve(element);
             }
         };
-        const documentObserver = new MutationObserver(findElement);
-        documentObserver.observe(document.body, { childList: true, subtree: true });
-        timeout = window.setTimeout(() => documentObserver.disconnect(), 30_000);
+        const mutationObserver = new MutationObserver(findElement);
+        mutationObserver.observe(rootNode, { childList: true, subtree: true });
+        timeout = window.setTimeout(() => {
+            mutationObserver.disconnect();
+            reject(new Error('Timeout'));
+        }, 30_000);
         findElement();
+
+        signal?.addEventListener('abort', () => {
+            mutationObserver.disconnect();
+            clearTimeout(timeout);
+            reject(new Error('Aborted'));
+        });
     });
 };
