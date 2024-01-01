@@ -1,0 +1,19 @@
+diff --git a/node_modules/html-to-image/es/clone-node.js b/node_modules/html-to-image/es/clone-node.js
+index dab4ade..5ca096c 100644
+--- a/node_modules/html-to-image/es/clone-node.js
++++ b/node_modules/html-to-image/es/clone-node.js
+@@ -88,10 +88,10 @@ function cloneCSSStyle(nativeNode, clonedNode) {
+     else {
+         toArray(sourceStyle).forEach((name) => {
+             let value = sourceStyle.getPropertyValue(name);
+-            if (name === 'font-size' && value.endsWith('px')) {
+-                const reducedFont = Math.floor(parseFloat(value.substring(0, value.length - 2))) - 0.1;
+-                value = `${reducedFont}px`;
+-            }
++            // if (name === 'font-size' && value.endsWith('px')) {
++            //     const reducedFont = Math.floor(parseFloat(value.substring(0, value.length - 2))) - 0.1;
++            //     value = `${reducedFont}px`;
++            // }
+             if (isInstanceOfElement(nativeNode, HTMLIFrameElement) &&
+                 name === 'display' &&
+                 value === 'inline') {
