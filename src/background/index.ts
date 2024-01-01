@@ -14,12 +14,14 @@ chrome.scripting.registerContentScripts([
     }
 ]);
 
-
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (sender.id !== chrome.runtime.id) {
         return;
     }
-    
+
+    if (message === 'OPEN_OPTIONS_PAGE') {
+        chrome.runtime.openOptionsPage();
+    }
 });
 
 chrome.runtime.onInstalled.addListener((details) => {
