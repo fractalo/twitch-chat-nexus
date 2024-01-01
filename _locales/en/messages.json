@@ -4,5 +4,11 @@
     },
     "extDescription": {
         "message": "Lets you view your Twitch chat history or collect chats of interest from the live chat window."
+    },
+    "defaultFilterGroupName": {
+        "message": "Default Filter Group"
+    },
+    "chatBot": {
+        "message": "Chatbot"
     }
 }

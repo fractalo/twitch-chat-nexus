@@ -1,3 +1,4 @@
+import { setupDefaultChatFilters } from "./storageInitializers";
 
 /**
  * to bypass async loader of crxjs
@@ -21,5 +22,16 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     
 });
 
+chrome.runtime.onInstalled.addListener((details) => {
+    if (details.reason === 'install') {
+        setupDefaultChatFilters();
+    } else if (details.reason === 'update') {
+        const previousMajorVersion = Number(details.previousVersion?.split('.')[0]);
+        const currentMajorVersion = Number(chrome.runtime.getManifest().version.split('.')[0]);
 
-export {}
+        if (previousMajorVersion < 2 && currentMajorVersion >= 2) {
+            setupDefaultChatFilters();
+        }
+    }
+});
+
