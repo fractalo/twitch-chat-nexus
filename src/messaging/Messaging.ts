@@ -1,5 +1,7 @@
 import { createNanoEvents, type Emitter } from "nanoevents";
+import { SCRIPT_IDS } from "./constants";
 
+const validScriptIds = Object.values(SCRIPT_IDS) as string[];
 
 interface Events {
     connect: (id: string) => void;
@@ -42,6 +44,7 @@ export class Messaging {
                 event.source !== window || 
                 !message.from || 
                 message.from === this.id || 
+                !validScriptIds.includes(message.from) ||
                 (message.to && message.to !== this.id)
             ) {
                 return;
@@ -72,7 +75,7 @@ export class Messaging {
     }
 
     postMessage(config: PostMessageConfig, responseCallback?: ResponseCallback) {
-        const contextId = config.contextId || crypto?.randomUUID();
+        const contextId = config.contextId || window.crypto?.randomUUID();
 
         responseCallback && this.responseCallbacks.set(contextId, responseCallback);  
 
