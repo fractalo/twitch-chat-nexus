@@ -3,9 +3,12 @@
     import { scale } from 'svelte/transition';
     import { cubicInOut, cubicOut } from 'svelte/easing';
     import type { Placement } from '@popperjs/core';
+    import Portal from "svelte-portal";
 
     export let text: string = '';
     export let placement: Placement = 'top';
+    export let isDelayed: boolean = true;
+    export let isDisabled: boolean = false;
 
     const [popperRef, popperContent] = createPopperActions({
         placement,
@@ -20,6 +23,8 @@
     
     let transitionInDelay = 200;
     let showTooltip = false;
+
+    const setShowTooltip = (show: boolean) => showTooltip = show;
 
     const openTooltip = (delay: number = 0) => {
         transitionInDelay = delay;
@@ -55,29 +60,32 @@
     on:mouseleave={handleMouseleave}
     on:focusin={handleFocusin}
     on:focusout={handleFocusout}
+    role="presentation"
 >
-    <slot />
+    <slot {setShowTooltip} />
 </div>
 
-{#if showTooltip}
-    <div id="tch-tooltip" use:popperContent={extraOpts} >
-        <div 
-            in:scale={{delay: transitionInDelay, duration: 100, start: 0.9, easing: cubicOut}}
-            out:scale={{duration: 100, start: 0.9, easing: cubicInOut}}
-        >
-            <div id="tch-tooltip-content" class="select-none">{text}</div>
-            <div id="tch-tooltip-arrow" data-popper-arrow />
+{#if showTooltip && !isDisabled}
+    <Portal target="body">
+        <div id="tcn-tooltip" use:popperContent={extraOpts} >
+            <div 
+                in:scale={{delay: isDelayed ? transitionInDelay : 0, duration: 100, start: 0.9, easing: cubicOut}}
+                out:scale={{duration: 100, start: 0.9, easing: cubicInOut}}
+            >
+                <div id="tcn-tooltip-content" class="select-none">{text}</div>
+                <div id="tcn-tooltip-arrow" data-popper-arrow />
+            </div>
         </div>
-    </div>
+    </Portal>
 {/if}
 
 
 <style>
-    #tch-tooltip {
+    #tcn-tooltip {
         z-index: 5000;
     }
 
-    #tch-tooltip-content {
+    #tcn-tooltip-content {
         display: inline-block;
         font-weight: var(--font-weight-semibold);
         line-height: var(--line-height-heading);
@@ -90,19 +98,19 @@
         max-width: 30rem;
     }
 
-    #tch-tooltip-arrow,
-    #tch-tooltip-arrow::before {
+    #tcn-tooltip-arrow,
+    #tcn-tooltip-arrow::after {
         position: absolute;
         width: 6px;
         height: 6px;
     }
 
-    #tch-tooltip-arrow {
+    #tcn-tooltip-arrow {
         visibility: hidden;
         z-index: -1;
     }
 
-    #tch-tooltip-arrow::before {
+    #tcn-tooltip-arrow::after {
         visibility: visible;
         content: " ";
         transform: rotate(45deg);
@@ -110,36 +118,35 @@
         box-shadow: rgba(0, 0, 0, 0.1) -1px -1px 1px;
     }
 
-
-    :global(#tch-tooltip[data-popper-placement^='top'] #tch-tooltip-arrow) {
+    :global(#tcn-tooltip[data-popper-placement^='top'] #tcn-tooltip-arrow) {
         bottom: -3px;
     }
 
-    :global(#tch-tooltip[data-popper-placement^='bottom'] #tch-tooltip-arrow) {
+    :global(#tcn-tooltip[data-popper-placement^='bottom'] #tcn-tooltip-arrow) {
         top: -3px;
     }
 
-    :global(#tch-tooltip[data-popper-placement^='left'] #tch-tooltip-arrow) {
+    :global(#tcn-tooltip[data-popper-placement^='left'] #tcn-tooltip-arrow) {
         right: -3px;
     }
 
-    :global(#tch-tooltip[data-popper-placement^='right'] #tch-tooltip-arrow) {
+    :global(#tcn-tooltip[data-popper-placement^='right'] #tcn-tooltip-arrow) {
         left: -3px;
     }
 
-    :global(#tch-tooltip[data-popper-placement^='top'] #tch-tooltip-arrow::before) {
+    :global(#tcn-tooltip[data-popper-placement^='top'] #tcn-tooltip-arrow::after) {
         border-radius: 0 0 var(--border-radius-small) 0;
     }
 
-    :global(#tch-tooltip[data-popper-placement^='bottom'] #tch-tooltip-arrow::before) {
+    :global(#tcn-tooltip[data-popper-placement^='bottom'] #tcn-tooltip-arrow::after) {
         border-radius: var(--border-radius-small) 0 0 0;
     }
 
-    :global(#tch-tooltip[data-popper-placement^='left'] #tch-tooltip-arrow::before) {
+    :global(#tcn-tooltip[data-popper-placement^='left'] #tcn-tooltip-arrow::after) {
         border-radius: 0 var(--border-radius-small) 0 0;
     }
 
-    :global(#tch-tooltip[data-popper-placement^='right'] #tch-tooltip-arrow::before) {
+    :global(#tcn-tooltip[data-popper-placement^='right'] #tcn-tooltip-arrow::after) {
         border-radius: 0 0 0 var(--border-radius-small); 
     }
 </style>
