@@ -76,7 +76,6 @@
 
   $: {
     chatFilterList = activeListTab === 'all' ? allChatFilterList : chatFilterListByType[activeListTab];
-    listScrollEl?.scrollTo(0, 0);
     updateSelectedFilters();
   }
 
@@ -254,6 +253,11 @@
 
   const listTabs: ChatFilterListTabType[] = ['all', ...CHAT_FILTER_TYPES];
 
+  const handleClickTab = (tab: ChatFilterListTabType) => {
+    activeListTab = tab;
+    listScrollEl?.scrollTo(0, 0);
+  };
+
   const handleChange = (types: ChatFilterType[]) => {
     const groupId = chatFilterGroup?.id;
     if (!groupId) return;
@@ -412,7 +416,7 @@
       <a 
         class="tab tab-sm  min-w-0 " 
         class:tab-active={tab === activeListTab}
-        on:click={() => activeListTab = tab}
+        on:click={() => handleClickTab(tab)}
         href={null}
       >
         <span class="whitespace-nowrap overflow-hidden text-ellipsis">{$i18n.t(tab)}</span>
