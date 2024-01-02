@@ -99,10 +99,14 @@
 
     "noFilterGroup": "No Filter Group",
 
-    "allSubscriptionTiers": "All Subscription Tiers",
-    "selectedSubscriptionTiers": "Selected Subscription Tiers",
-    "allSubscriptionMonths": "All Subscription Months",
-    "selectedSubscriptionMonths": "Selected Subscription Months",
+    "noSelectedVersions": "No Selected Versions",
+    "noSelectedSubscriptionTiers": "No Selected Tiers",
+    "noSelectedSubscriptionMonths":  "No Selected Months",
+
+    "allSubscriptionTiers": "All Tiers",
+    "selectedSubscriptionTiers": "Selected Tiers",
+    "allSubscriptionMonths": "All Months",
+    "selectedSubscriptionMonths": "Selected Months",
     "withSubscriberBadge": "With Subscriber Badge",
     "withoutSubscriberBadge": "Without Subscriber Badge",
 

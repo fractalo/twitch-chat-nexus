@@ -488,8 +488,18 @@
                 {#if chatFilter.badgeType === 'general'}
                   {#if !chatFilter.versions && !chatFilter.versionRanges}
                     {#if ($globalChatBadgesStore[chatFilter.setId]?.size ?? 0) > 1}
-                      <div class="badge badge-success">{$i18n.t('allBadgeVersions')}</div>
+                      <div class="badge badge-success max-w-full">
+                        <span class="whitespace-nowrap overflow-hidden text-ellipsis">
+                          {$i18n.t('allVersions')}
+                        </span>
+                      </div>
                     {/if}
+                  {:else if !chatFilter.versions?.length && !chatFilter.versionRanges?.length}
+                    <div class="badge badge-error max-w-full h-auto">
+                      <span class="break-words">
+                        {$i18n.t('noSelectedVersions', { ns: 'optionApp' })}
+                      </span>
+                    </div>
                   {:else}
                     {#if chatFilter.versions?.length}
                       <div class="flex flex-wrap gap-1">
@@ -561,12 +571,24 @@
                           </div>
                         {/each}
                       </div>
+                    {:else}
+                      <div class="badge badge-error max-w-full h-auto">
+                        <span class="break-words">
+                          {$i18n.t('noSelectedSubscriptionTiers', { ns: 'optionApp' })}
+                        </span>
+                      </div>
                     {/if}
 
                     {#if !chatFilter.months && !chatFilter.monthRanges}
                       <div class="badge badge-success max-w-full">
                         <span class="whitespace-nowrap overflow-hidden text-ellipsis">
                           {$i18n.t('allSubscriptionMonths', { ns: 'optionApp' })}
+                        </span>
+                      </div>
+                    {:else if !chatFilter.months?.length && !chatFilter.monthRanges?.length}
+                      <div class="badge badge-error max-w-full h-auto">
+                        <span class="break-words">
+                          {$i18n.t('noSelectedSubscriptionMonths', { ns: 'optionApp' })}
                         </span>
                       </div>
                     {:else}

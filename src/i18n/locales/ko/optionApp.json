@@ -159,10 +159,14 @@
 
     "noFilterGroup": "필터 그룹이 없습니다",
 
-    "allSubscriptionTiers": "모든 구독 티어",
-    "selectedSubscriptionTiers": "선택된 구독 티어",
-    "allSubscriptionMonths": "모든 구독 개월 수",
-    "selectedSubscriptionMonths": "선택된 구독 개월 수",
+    "noSelectedVersions": "선택된 버전 없음",
+    "noSelectedSubscriptionTiers": "선택된 티어 없음",
+    "noSelectedSubscriptionMonths":  "선택된 개월 수 없음",
+
+    "allSubscriptionTiers": "모든 티어",
+    "selectedSubscriptionTiers": "선택된 티어",
+    "allSubscriptionMonths": "모든 개월 수",
+    "selectedSubscriptionMonths": "선택된 개월 수",
     "withSubscriberBadge": "구독자 배지 소유",
     "withoutSubscriberBadge": "구독자 배지 미소유",
 
