@@ -4,13 +4,15 @@
     import IconButton from "../../components/IconButton.svelte";
     import { PAGE_SIZES, CHAT_LOG_OPERATION_NAME, DEFAULT_PAGE_SIZE } from './constants';
     import { isPersistedQueryNotFound } from "src/injected/interceptor/clients/GqlClient/isPersistedQueryNotFound";
-    import { createModLogsMessagesRequest, filterEdges, modLogsMessagesQuery, type ModLogsMessagesGqlRequest } from "src/injected/interceptor/clients/GqlClient/operations/TCH_ViewerCardModLogsMessagesBySender";
+    import { createModLogsMessagesRequest, filterEdges, modLogsMessagesQuery, type ModLogsMessagesGqlRequest } from "src/injected/interceptor/clients/GqlClient/operations/TCN_ViewerCardModLogsMessagesBySender";
     import type { GqlRequest, GqlResponse } from "src/injected/interceptor/clients/GqlClient/types";
-    import { isRecord } from "src/util/SafeAny";
+    import { isRecord } from "src/util/typePredicates";
     import { assignPropertyIfValid } from "src/util/assignPropertyIfValid";
     import { chatLogStyleState, requestConfig } from './stores';
     import { i18n } from 'src/i18n';
     import type { GqlClient } from 'src/injected/interceptor/clients/GqlClient';
+    import Dropdown from '../../components/Dropdown.svelte';
+  import DropdownTooltipIconButton from '../../components/DropdownTooltipIconButton.svelte';
 
     export let refreshMessagesTab: (() => void);
     export let gqlClient: GqlClient;
@@ -71,29 +73,6 @@
         isFirstPage = !$requestConfig.cursor;
         isLastPage = !nextPageCursor;
     }
-
-
-    let isSettingsMenuOpen = false;
-    let settingsElement: HTMLElement | null = null;
-
-    const handleSettingsButtonClick = () => {
-        isSettingsMenuOpen = !isSettingsMenuOpen;
-    };
-
-    const handleSettingsOutsideClick = (event: MouseEvent) => {
-        if (
-            event.isTrusted &&
-            isSettingsMenuOpen && 
-            event.target instanceof Node && 
-            !settingsElement?.contains(event.target)
-        ) {
-            isSettingsMenuOpen = false;
-        }
-    };
-
-    document.addEventListener('click', handleSettingsOutsideClick);
-    
-    
 
 
     const chatUsernameStyleEl = document.createElement('style');
@@ -250,22 +229,32 @@
 
 <div class="flex flex-row-reverse flex-wrap-reverse items-center h-full ml-2 py-2 gap-4">
     <div class="flex">
-        <Tooltip text={$i18n.t('chatLogView.refreshButton')}>
-            <IconButton type="ghost" icon={faRotateRight} handleClick={refreshPage} />
+        <Tooltip text={$i18n.t('refresh')}>
+            <IconButton type="ghost" icon={faRotateRight} on:click={refreshPage} />
         </Tooltip>
 
-        <div 
-            bind:this={settingsElement}
-        >
-            <Tooltip text={$i18n.t('chatLogView.settingsButton')}>
-                <IconButton type="ghost" icon={faGear} handleClick={handleSettingsButtonClick} />
-            </Tooltip>
+        <Dropdown>
+            <DropdownTooltipIconButton 
+                slot="button"
+                let:toggleDropdown
+                let:isDropdownOpen
+                {toggleDropdown}
+                {isDropdownOpen}
 
-            {#if isSettingsMenuOpen}
-            <div class="flex flex-col p-4 tw-shadow bg-base-100 rounded-box w-[22rem] absolute right-0 z-40 mt-3">
+                tooltipText={$i18n.t('chatLogView.settings', { ns: 'mainApp' })}
+                tooltipPlacement="top"
+
+                buttonType="ghost"
+                buttonIcon={faGear}
+            />
+
+            <div slot="body" class="tcn-card flex flex-col px-4 pt-2 pb-4 rounded-box w-[22rem] absolute right-0 z-40">
+                <div class="flex w-full justify-center py-2 mb-2">
+                    <span class="tcn-card-title-sm">{$i18n.t('chatLogView.settings', { ns: 'mainApp' })}</span>
+                </div>
                 <div class="daisy-form-control">
                     <label class="daisy-label cursor-pointer p-0">
-                        <span class="daisy-label-text mr-2">{$i18n.t('chatLogView.paginationToggle')}</span> 
+                        <span class="daisy-label-text mr-2">{$i18n.t('chatLogView.paginationToggle', { ns: 'mainApp' })}</span> 
                         <input type="checkbox" class="daisy-toggle daisy-toggle-primary" 
                             bind:checked={isPaginationEnabled} 
                             on:change={fetchFirstPage}
@@ -275,14 +264,14 @@
                 {#if isPaginationEnabled && screenWidth < 530}
                     <div class="daisy-form-control ml-6 mb-2">
                         <label for="pageSize" class="daisy-label">
-                            <span class="daisy-label-text">{$i18n.t('chatLogView.pageSize.label')}</span>
+                            <span class="daisy-label-text">{$i18n.t('chatLogView.pageSize.label', { ns: 'mainApp' })}</span>
                         </label>
                         <select id="pageSize" class="daisy-select"
                             bind:value={$requestConfig.pageSize} 
                             on:change={fetchFirstPage}
                         >
                             {#each PAGE_SIZES as size}
-                                <option value={size}>{size.toLocaleString('en-US')}{$i18n.t('chatLogView.pageSize.suffix')}</option>
+                                <option value={size}>{size.toLocaleString('en-US')}{$i18n.t('chatLogView.pageSize.suffix', { ns: 'mainApp' })}</option>
                             {/each}
                         </select>
                     </div>
@@ -290,7 +279,7 @@
 
                 <div class="daisy-form-control">
                     <label class="daisy-label cursor-pointer p-0">
-                        <span class="daisy-label-text mr-2">{$i18n.t('chatLogView.chatUsernameToggle')}</span> 
+                        <span class="daisy-label-text mr-2">{$i18n.t('chatLogView.chatUsernameToggle', { ns: 'mainApp' })}</span> 
                         <input type="checkbox" class="daisy-toggle daisy-toggle-primary" 
                             bind:checked={$chatLogStyleState.hideChatUsername}
                             on:change={handleUsernameToggle}
@@ -298,36 +287,35 @@
                     </label>
                 </div>
             </div>
-            {/if}
-        </div>
+        </Dropdown>
     </div>
 
 
     {#if isPaginationEnabled}
     <div class="flex gap-2 items-center">
-        <Tooltip text={$i18n.t('chatLogView.paginationButtons.first.tooltip')}>
-            <IconButton type="primary" icon={faBackwardStep} handleClick={fetchFirstPage} disabled={isFirstPage} />
+        <Tooltip text={$i18n.t('chatLogView.paginationButtons.first.tooltip', { ns: 'mainApp' })}>
+            <IconButton type="primary" icon={faBackwardStep} on:click={fetchFirstPage} disabled={isFirstPage} />
         </Tooltip>
         {#if screenWidth >= 330}
-            <IconButton type="primary" icon={faAngleLeft} text={$i18n.t('chatLogView.paginationButtons.previous.label')} textPosition="right" handleClick={fetchPrevPage} disabled={isFirstPage} />
-            <IconButton type="primary" icon={faAngleRight} text={$i18n.t('chatLogView.paginationButtons.next.label')} textPosition="left" handleClick={fetchNextPage} disabled={isLastPage} />
+            <IconButton type="primary" icon={faAngleLeft} text={$i18n.t('chatLogView.paginationButtons.previous.label', { ns: 'mainApp' })} textPosition="right" on:click={fetchPrevPage} disabled={isFirstPage} />
+            <IconButton type="primary" icon={faAngleRight} text={$i18n.t('chatLogView.paginationButtons.next.label', { ns: 'mainApp' })} textPosition="left" on:click={fetchNextPage} disabled={isLastPage} />
         {:else}
-            <Tooltip text={$i18n.t('chatLogView.paginationButtons.previous.tooltip')}>
-                <IconButton type="primary" icon={faAngleLeft} handleClick={fetchPrevPage} disabled={isFirstPage} />
+            <Tooltip text={$i18n.t('chatLogView.paginationButtons.previous.tooltip', { ns: 'mainApp' })}>
+                <IconButton type="primary" icon={faAngleLeft} on:click={fetchPrevPage} disabled={isFirstPage} />
             </Tooltip>
-            <Tooltip text={$i18n.t('chatLogView.paginationButtons.next.tooltip')}>
-                <IconButton type="primary" icon={faAngleRight} handleClick={fetchNextPage} disabled={isLastPage} />
+            <Tooltip text={$i18n.t('chatLogView.paginationButtons.next.tooltip', { ns: 'mainApp' })}>
+                <IconButton type="primary" icon={faAngleRight} on:click={fetchNextPage} disabled={isLastPage} />
             </Tooltip>
         {/if}
 
         {#if screenWidth >= 530}
-            <Tooltip text={$i18n.t('chatLogView.pageSize.label')}>
+            <Tooltip text={$i18n.t('chatLogView.pageSize.label', { ns: 'mainApp' })}>
                 <select class="daisy-select ml-2"
                     bind:value={$requestConfig.pageSize} 
                     on:change={fetchFirstPage}
                 >
                     {#each PAGE_SIZES as size}
-                        <option value={size}>{size.toLocaleString('en-US')}{$i18n.t('chatLogView.pageSize.suffix')}</option>
+                        <option value={size}>{size.toLocaleString('en-US')}{$i18n.t('chatLogView.pageSize.suffix', { ns: 'mainApp' })}</option>
                     {/each}
                 </select>
             </Tooltip>
@@ -335,25 +323,3 @@
     </div>
     {/if}
 </div>
-
-
-<style>
-    span,
-    select {
-        font-family: inherit;
-        font-size: 1.3rem;
-    }
-
-    .daisy-select {
-        font-weight: 400;
-    }
-
-    .tw-shadow {
-        box-shadow: var(--shadow-elevation-2);
-    }
-
-    .daisy-form-control {
-        padding: 0.5rem;
-    }
-
-</style>
