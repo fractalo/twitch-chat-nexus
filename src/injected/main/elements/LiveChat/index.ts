@@ -1,16 +1,17 @@
-import routes from "../routes";
-import domObserver from "../observers/domObserver";
+import routes from "../../routes";
+import domObserver from "../../observers/domObserver";
 import { createNanoEvents, type Emitter } from "nanoevents";
 
 
 interface Events {
     update: () => void;
+    'update:rootEl': (el: HTMLElement) => void;
     destroy: (isPermanent: boolean) => void;
 }
 
 class LiveChat {
     private readonly validRouteNames = ['channel', 'channel-home', 'chat', 'embed-chat'];
-    private emitter: Emitter;
+    private emitter: Emitter<Events>;
     
     private removeDOMListener: ReturnType<typeof domObserver.on> | null = null;
     private domListenerTimer: number | undefined;
@@ -34,23 +35,27 @@ class LiveChat {
             this.startListeningDOMUpdates();
         });
 
-        const init = (routeName: string) => {
-            if (this.validRouteNames.includes(routeName)) {
-                this.cleanup(false);
-                this.startListeningDOMUpdates();
-                this._isEnabled = true;
-            } else {
-                this.cleanup(true);
-            }
-        };
+        routes.on('change', routeName => this.init(routeName));
 
-        routes.on('change', init);
+        this.init(routes.name);
+    }
 
-        init(routes.name);
+    private init(routeName: string) {
+        if (this.validRouteNames.includes(routeName)) {
+            this.cleanup(false);
+            this.startListeningDOMUpdates();
+            this._isEnabled = true;
+        } else {
+            this.cleanup(true);
+        }
     }
 
     get isEnabled() {
         return this._isEnabled;
+    }
+
+    get rootEl() {
+        return this.streamChatEl;
     }
 
     private disconnectObservers() {
@@ -93,9 +98,10 @@ class LiveChat {
     private handleDOMUpdate() {
         if (!document.contains(this.streamChatEl)) {
             this.streamChatEl = document.querySelector('.stream-chat');
-            if (this.streamChatEl) {
+            if (this.streamChatEl) {        
                 this.streamChatObserver.disconnect();
                 this.streamChatObserver.observe(this.streamChatEl, { childList: true });
+                this.emitter.emit('update:rootEl', this.streamChatEl);
             }
         }
     
