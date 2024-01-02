@@ -1,6 +1,6 @@
 import ChatIndicator from "./ChatIndicator.svelte";
 import liveChat from "../../elements/LiveChat";
-import type { Message } from "ircv3/lib";
+import type { Message } from "node_modules/ircv3/lib";
 import type { Ping, PrivMsg } from "./types";
 import { getChatClient } from "../../clients";
 
@@ -63,8 +63,9 @@ class ChatIndicatorManager {
         chatClient.on('receive', (message) => {
             switch (message.command) {
                 case 'USERSTATE': {
+                    if (!this.latestPrivMsg) return;
                     const nonce = this.getClientNonce(message);
-                    if (nonce && this.latestPrivMsg?.nonce === nonce) {
+                    if (nonce && this.latestPrivMsg.nonce === nonce) {
                         this.indicator.setState('success'); 
                         this.indicator.updateResponseTime(Date.now() - this.latestPrivMsg.sentAt, 0.25);
                         this.latestPrivMsg = null;
