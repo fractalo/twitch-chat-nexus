@@ -9,8 +9,8 @@
 </script>
 
 
-<Tooltip text={$i18n.t('chatLogViewOpeningButton.tooltip')}>
-    <IconButton type="ghost" icon={faClockRotateLeft} handleClick={handleButtonClick}/>
+<Tooltip text={$i18n.t('chatLogViewOpeningButton.tooltip', { ns: 'mainApp' })}>
+    <IconButton type="ghost" icon={faClockRotateLeft} on:click={handleButtonClick}/>
 </Tooltip>
 
 

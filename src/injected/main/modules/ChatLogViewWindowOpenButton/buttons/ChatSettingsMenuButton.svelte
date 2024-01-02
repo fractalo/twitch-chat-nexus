@@ -1,5 +1,5 @@
 <script lang="ts">
-    import Fa from 'svelte-fa/src/fa.svelte';
+    import Fa from 'svelte-fa';
     import { faClockRotateLeft } from '@fortawesome/free-solid-svg-icons';
     import { i18n } from 'src/i18n';
 
@@ -12,7 +12,7 @@
     on:click={handleButtonClick}
 >
     <div class="tw-chat-settings-button-content-container">
-        <div class="tw-chat-settings-button-text">{$i18n.t('chatLogViewOpeningButton.label')}</div>
+        <div class="tw-chat-settings-button-text">{$i18n.t('chatLogViewOpeningButton.label', { ns: 'mainApp' })}</div>
         <div class="tw-chat-settings-button-icon-wrapper">
             <div class="tw-chat-settings-button-icon">
                 <Fa class="text-[1.65rem]" icon={faClockRotateLeft} />
