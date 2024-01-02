@@ -7,7 +7,7 @@ interface Events {
 }
 
 class DOMObserver {
-    private emitter: Emitter;
+    private emitter: Emitter<Events>;
     private observer: MutationObserver;
 
     constructor() {
@@ -16,25 +16,23 @@ class DOMObserver {
         this.observer = new MutationObserver(throttle(() => this.emitter.emit('update'), 100));
     }
 
-    on<E extends keyof Events>(event: E, callback: Events[E]) {
-        const unbind = this.emitter.on(event, callback);
-        if (event === 'update') {
-            this.observe();
-            return () => {
-                unbind();
-                !this.emitter.events[event]?.length && this.disconnect();
-            };
-        }
-        return unbind;
-    }
-
     private async observe() {
         await waitForDOMReady();
+        if (!this.hasListeners()) return;
         this.observer.observe(document.body, { childList: true, subtree: true });
     }
 
     private disconnect() {
         this.observer.disconnect();
+    }
+
+    on<E extends keyof Events>(event: E, callback: Events[E]) {
+        const unbind = this.emitter.on(event, callback);
+        this.observe();
+        return () => {
+            unbind();
+            !this.hasListeners() && this.disconnect();
+        };
     }
 
     async waitForElement(selectors: string, criteria?: (el: HTMLElement) => boolean) {
@@ -52,6 +50,10 @@ class DOMObserver {
             timeout = window.setTimeout(() => removeListener(), 60_000);
             findElement();
         });
+    }
+
+    private hasListeners() {
+        return Object.values(this.emitter.events).some(event => event?.length);
     }
 
 }
