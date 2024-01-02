@@ -1,19 +1,21 @@
 import { derived } from 'svelte/store';
 import type { Config } from './types';
-import { settingValuesStore } from '../../stores';
-import { percentToDecimal } from 'src/util/percentToDecimal';
+import { getSettingValueStore } from '../../stores';
+import { isNonNullableTuple } from 'src/util/typePredicates';
 
 
-export const configStore = derived(settingValuesStore, ($settingValuesStore) => {
-    if (!$settingValuesStore) return null;
+export const configStore = derived([getSettingValueStore('chatLogView')], (stores) => {
+    if (!isNonNullableTuple(stores)) return null;
 
-    const openingButtonSettings = $settingValuesStore.chatLogView.openingButton;
+    const [$chatLogView] = stores;
+
+    const openingButtonSettings = $chatLogView.openingButton;
 
     const config: Config = {
-        location: openingButtonSettings.location as string,
-        windowType: openingButtonSettings.windowType as string,
-        alwaysNewWindow: openingButtonSettings.alwaysNewWindow as boolean,
-        popupSize: percentToDecimal(openingButtonSettings.popupSize as string, 1.0),
+        location: openingButtonSettings.location,
+        windowType: openingButtonSettings.windowType,
+        alwaysNewWindow: openingButtonSettings.alwaysNewWindow,
+        popupSize: openingButtonSettings.popupSize / 100,
     };
 
     return config;
