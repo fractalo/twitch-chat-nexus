@@ -8,7 +8,7 @@
 
 </script>
 
-<div class="tcn-chat-footer">
+<div class="tcn-chat-footer z-10">
   {#if newChatCount > 0}
     <div class="tcn-chat-footer-badge absolute font-semibold top-[-0.95rem] right-[-0.5rem] z-[1]">
       {#if newChatCount <= MAX_NEW_CHAT_COUNT}
