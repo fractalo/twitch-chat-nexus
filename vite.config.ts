@@ -28,6 +28,8 @@ if (process.env.BROWSER) {
     browser = process.env.BROWSER as Browser;
 }
 
+process.env.VITE_BROWSER = browser;
+
 const outDir = createOutdirName(browser);
 
 if (browser === 'firefox') {

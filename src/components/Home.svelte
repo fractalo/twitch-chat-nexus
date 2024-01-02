@@ -17,6 +17,12 @@
 
   const manifest = chrome.runtime.getManifest();
 
+  const getExtensionReviewUrl = () => {
+    if (import.meta.env.VITE_BROWSER === 'firefox') {
+      return 'https://addons.mozilla.org/firefox/addon/twitch-chat-nexus/';
+    }
+    return 'https://chromewebstore.google.com/detail/twitch-chat-nexus/oopcjaklhenijofoanbpchndknfadldn/reviews';
+  };
 
 </script>
 
@@ -54,7 +60,7 @@
             class="btn btn-square btn-ghost"
             placement="top"
             label={$i18n.t('rateExtension', { ns: 'optionApp' })}
-            on:click={() => createTab(`https://chromewebstore.google.com/detail/twitch-chat-nexus/oopcjaklhenijofoanbpchndknfadldn/reviews`)}
+            on:click={() => createTab(getExtensionReviewUrl())}
           >
             <Fa class="text-2xl" icon={faStar} />
           </TooltipButton>
