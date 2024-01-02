@@ -27,7 +27,7 @@ type ResponseCallback = (response: Message) => void;
 
 export class Messaging {
     private id: string;
-    private emitter: Emitter;
+    private emitter: Emitter<Events>;
     private connections: Set<string>;
     private responseCallbacks: Map<string, ResponseCallback>;
     

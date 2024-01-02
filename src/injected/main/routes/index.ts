@@ -8,7 +8,7 @@ interface Events {
 }
 
 class Routes {
-    private emitter: Emitter;
+    private emitter: Emitter<Events>;
     private routeName: string;
 
     constructor() {

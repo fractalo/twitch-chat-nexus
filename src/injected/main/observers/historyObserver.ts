@@ -8,7 +8,7 @@ interface Events {
 }
 
 class HistoryObserver {
-    private emitter: Emitter;
+    private emitter: Emitter<Events>;
 
     constructor() {
         this.emitter = createNanoEvents<Events>();
