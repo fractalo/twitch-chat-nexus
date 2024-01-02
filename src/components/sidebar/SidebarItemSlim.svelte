@@ -11,6 +11,7 @@
   import { shift } from "svelte-floating-ui/dom";
   import type { MenuItem } from '../types';
   import Tooltip from '../tooltip/Tooltip.svelte';
+  import Portal from 'svelte-portal';
 
   export let menuItem: MenuItem;
 
@@ -107,24 +108,26 @@
   </li>
 
   {#if showSubmenu}
-    <ul 
-      bind:this={submenuEl}
-      class="fixed menu shadow-lg bg-base-300 min-w-40 rounded-box ml-2 z-10 before:hidden" 
-      use:submenuContent
-      transition:fade={{duration: 100}}
-    >
-      <li class="menu-title">{$i18n.t(`sidebar.${id}`, {ns: 'optionApp'})}</li>
-      {#each submenuIds as submenuId}
-        <li>
-          <a 
-            class="{activeSubmenu === submenuId ? 'active cursor-pointer' : ''}"
-            href={null}
-            on:click={() => handleSubmenuClick(submenuId)}
-          >
-            {$i18n.t($i18n.t(`sidebar.${submenuId}`, {ns: 'optionApp'}))}
-          </a>
-        </li>
-      {/each}
-    </ul>
+    <Portal target="body">
+      <ul 
+        bind:this={submenuEl}
+        class="fixed menu menu-primary shadow-lg bg-base-300 min-w-40 rounded-box ml-2 z-10 before:hidden" 
+        use:submenuContent
+        transition:fade={{duration: 100}}
+      >
+        <li class="menu-title">{$i18n.t(`sidebar.${id}`, {ns: 'optionApp'})}</li>
+        {#each submenuIds as submenuId}
+          <li>
+            <a 
+              class="{activeSubmenu === submenuId ? 'active cursor-pointer' : ''}"
+              href={null}
+              on:click={() => handleSubmenuClick(submenuId)}
+            >
+              {$i18n.t($i18n.t(`sidebar.${submenuId}`, {ns: 'optionApp'}))}
+            </a>
+          </li>
+        {/each}
+      </ul>
+    </Portal>
   {/if}
 </Tooltip>
