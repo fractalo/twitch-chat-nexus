@@ -2,7 +2,7 @@ export const CURRENT_NOTICE_ID: number = 1;
 
 const VIEWED_APP_NOTICE_ID_STORAGE_KEY = 'tcn_viewed_app_notice_id';
 
-const DEFAULT_VIEWED_APP_NOTICE_ID: number = CURRENT_NOTICE_ID - 1;
+const DEFAULT_VIEWED_APP_NOTICE_ID: number = 1;
 
 
 export const getValidViewedAppNoticeId = (value: unknown, fallback: number) => {
