@@ -51,4 +51,14 @@ export const forceModPermission = () => {
         }
         return response;
     });
+
+    gqlClient.setResponseHook('CurrentUserModeratorStatus', async(request, response) => {
+        isModerator = (response?.data?.user?.self?.isModerator as unknown) === true;
+        postMessage();
+
+        if (!assignPropertyIfValid(response?.data?.user?.self, 'isModerator', true)) {
+            console.log('could not modify CurrentUserModeratorStatus response.');
+        }
+        return response;
+    });
 };
