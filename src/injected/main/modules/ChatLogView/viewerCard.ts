@@ -20,3 +20,12 @@ export const getModLogsPageEl = async() => {
     );
 };
 
+let modLogsElPromise: Promise<HTMLElement> | null = null;
+
+export const getModLogsEl = async() => {
+    return modLogsPageElPromise ??= domObserver.waitForElement(
+        '.viewer-card-mod-logs',
+        (el) => Boolean(el.querySelector('.mod-logs-entry-list'))
+    );
+};
+

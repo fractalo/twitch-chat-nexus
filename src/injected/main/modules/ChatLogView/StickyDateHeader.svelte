@@ -5,7 +5,6 @@
   import { sineInOut } from 'svelte/easing';
   import { chatLogStyleState } from './stores';
 
-  export let modLogsPageEl: HTMLElement;
 
   const TIMEOUT = 800;
 
@@ -123,32 +122,39 @@
   const logObserver = new MutationObserver(updateDateSeperators);
 
 
-  const handlePageRefresh = () => {
-    if (document.contains(scrollContentEl)) return;
+  let modLogsPageObserver: MutationObserver | null = null;
 
-    if (scrollContentEl) {
-      scrollContentEl.removeEventListener('scroll', scrollListener);
-      separatorObservers.forEach(observer => observer.disconnect());
-      logObserver.disconnect();
-      scrollContentEl = null;
-      currentDateSeparator = null;
-    }
+  export const updateModLogsPageEl = (modLogsPageEl: HTMLElement) => {
+    modLogsPageObserver?.disconnect();
 
-    scrollContentEl = modLogsPageEl.querySelector<HTMLElement>(".simplebar-scroll-content");
-    if (scrollContentEl) {
-      scrollContentEl.addEventListener('scroll', scrollListener);
+    const handlePageRefresh = () => {
+      if (document.contains(scrollContentEl)) return;
 
-      scrollContentEl.firstElementChild?.firstElementChild && 
-      logObserver.observe(scrollContentEl.firstElementChild.firstElementChild, { childList: true });
-      updateDateSeperators();
+      if (scrollContentEl) {
+        scrollContentEl.removeEventListener('scroll', scrollListener);
+        separatorObservers.forEach(observer => observer.disconnect());
+        logObserver.disconnect();
+        scrollContentEl = null;
+        currentDateSeparator = null;
+      }
 
-    } else {
-      hideDateHeader();
-    }
+      scrollContentEl = modLogsPageEl.querySelector<HTMLElement>(".simplebar-scroll-content");
+      if (scrollContentEl) {
+        scrollContentEl.addEventListener('scroll', scrollListener);
+
+        scrollContentEl.firstElementChild?.firstElementChild && 
+        logObserver.observe(scrollContentEl.firstElementChild.firstElementChild, { childList: true });
+        updateDateSeperators();
+
+      } else {
+        hideDateHeader();
+      }
+    };
+
+    modLogsPageObserver = new MutationObserver(handlePageRefresh)
+    modLogsPageObserver.observe(modLogsPageEl, { childList: true });
+    handlePageRefresh();
   };
-
-  new MutationObserver(handlePageRefresh).observe(modLogsPageEl, { childList: true });
-  handlePageRefresh();
 
 
   

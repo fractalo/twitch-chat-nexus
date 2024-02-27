@@ -1,9 +1,7 @@
 import ChatLogView from "./ChatLogView.svelte";
-import { getDrawerTabsEl, getModLogsPageEl } from "./viewerCard";
+import { getDrawerTabsEl, getModLogsEl } from "./viewerCard";
 import { isSelfViewerCardPage, setDaisyUiTheme } from "src/util/twitch";
 import StickyDateHeader from './StickyDateHeader.svelte';
-import { requestConfig } from './stores';
-import type { PaginationDirection } from "./types";
 import { getGqlClient } from "../../clients";
 import messaging from "../../messaging";
 import { SCRIPT_IDS } from "src/messaging";
@@ -85,39 +83,29 @@ class ChatLogViewManager {
     }
 
     private async initStickyDateHeader() { 
-        const modLogsPageEl = await getModLogsPageEl();
+        const modLogsEl = await getModLogsEl();
+
+        let modLogsPageEl: HTMLElement | null = null;
 
         const rootEl = document.createElement('div');
         setDaisyUiTheme(rootEl);
 
-        modLogsPageEl.prepend(rootEl);
+        const stickyDateHeader = new StickyDateHeader({ target: rootEl });
 
-        new StickyDateHeader({ target: rootEl, props: { modLogsPageEl } });
+        const updateModLogsPageEl = () => {
+            if (document.contains(modLogsPageEl)) return;
+            modLogsPageEl = document.querySelector('.viewer-card-mod-logs-page');
 
-        let paginationDirection: PaginationDirection;
-        requestConfig.subscribe(value => paginationDirection = value.direction);
+            if (!modLogsPageEl) return;
 
-        new MutationObserver(() => {
-            const contentEl = modLogsPageEl.querySelector(".simplebar-scroll-content");
-            
-            if (contentEl && paginationDirection === 'previous') {
-                const timer = setInterval(() => {
-                    if (!contentEl.scrollTop) {
-                        const scrollToTop = () => {
-                            contentEl.scrollTo(0, 0);
-                            contentEl.removeEventListener('scroll', scrollToTop);
-                            contentEl.removeEventListener('click', scrollToTop);
-                        };
-                        contentEl.addEventListener('scroll', scrollToTop);
-                        contentEl.addEventListener('click', scrollToTop);
-                        clearInterval(timer);
-                        return;
-                    }
-                    contentEl.scrollTo(0, 0);
-                }, 10);
-                setTimeout(() => clearInterval(timer), 200);
-            }
-        }).observe(modLogsPageEl, { childList: true });
+            modLogsPageEl.prepend(rootEl);
+
+            stickyDateHeader.updateModLogsPageEl(modLogsPageEl);
+        }
+
+        new MutationObserver(updateModLogsPageEl).observe(modLogsEl, { childList: true });
+
+        updateModLogsPageEl();
     }
 }
 
