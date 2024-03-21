@@ -5,9 +5,12 @@ import StickyDateHeader from './StickyDateHeader.svelte';
 import { getGqlClient } from "../../clients";
 import messaging from "../../messaging";
 import { SCRIPT_IDS } from "src/messaging";
+import missingStyles from "./missingStyles.css?inline";
+import { injectInlineStyle } from "src/util/injectors";
 
 class ChatLogViewManager {
     constructor() {
+        injectInlineStyle(missingStyles);
         this.initChatLogView();
         this.initStickyDateHeader();
     }

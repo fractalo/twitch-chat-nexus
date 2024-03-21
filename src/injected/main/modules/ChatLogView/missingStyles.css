@@ -1,0 +1,24 @@
+.chat-line__message--emote,.chat-line__message--emote-button {
+    margin: -.5rem 0;
+    position: relative;
+    vertical-align: middle
+}
+
+.chat-line__message--emote-button {
+    -webkit-text-fill-color: initial;
+    -moz-text-fill-color: initial;
+    align-items: center;
+    cursor: pointer;
+    display: inline-flex;
+    font-style: normal;
+    height: 2.8rem;
+    justify-content: center;
+    outline: none;
+    pointer-events: all;
+    width: 2.8rem
+}
+
+.chat-line__message--emote-button:hover {
+    background: var(--color-background-interactable-alpha-active);
+    border-radius: var(--border-radius-medium)
+}
