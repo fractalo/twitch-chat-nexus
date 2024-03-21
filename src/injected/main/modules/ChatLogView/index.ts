@@ -77,7 +77,7 @@ class ChatLogViewManager {
         
         const refreshMessagesTab = () => {
             modDrawerTabBtnEls[1]?.click();
-            modDrawerTabBtnEls[0]?.click();
+            setTimeout(() => modDrawerTabBtnEls[0]?.click(), 10);
         };
 
         const gqlClient = await getGqlClient();
