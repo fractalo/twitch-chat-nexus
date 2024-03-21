@@ -44,7 +44,7 @@ export const setDaisyUiTheme = (element: HTMLElement) => {
 
 export const findReactInstance = (element: Element): Fiber | undefined => {
     const fiberEntry = Object.entries(element).find(([key, value]) => {
-        return key.startsWith('__reactInternalInstance$') && value && typeof value === 'object';
+        return key.startsWith('__reactFiber$') && value && typeof value === 'object';
     });
 
     if (!fiberEntry) return;
