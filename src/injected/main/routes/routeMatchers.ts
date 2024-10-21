@@ -11,16 +11,16 @@ const TWITCH_ROUTES = {
     'front-page': '/',
 	'collection': '/collections/:collectionID',
 	'dir': '/directory',
-	'dir-following': '/directory/following/:category?',
-	'dir-game-index': '/directory/game/:gameName',
-	'dir-game-clips': '/directory/game/:gameName/clips',
-	'dir-game-videos': '/directory/game/:gameName/videos/:filter',
-	'dir-all': '/directory/all/:filter?',
+	'dir-following': '/directory/following{/:category}',
+	'dir-game-index': '/directory/category/:gameName',
+	'dir-game-clips': '/directory/category/:gameName/clips',
+	'dir-game-videos': '/directory/category/:gameName/videos/:filter',
+	'dir-all': '/directory/all{/:filter}',
 	'event': '/event/:eventName',
 	'chat': '/popout/:loginName/chat',
 	'video': '/videos/:videoID',
 	'channel-video': '/:loginName/video/:videoID',
-	'channel-videos': '/:loginName/videos/:filter?',
+	'channel-videos': '/:loginName/videos{/:filter}',
 	'channel-clips': '/:loginName/clips',
 	'channel-clip': '/:loginName/clip/:clipID',
 	'channel-collections': '/:loginName/collections',
@@ -38,19 +38,19 @@ const TWITCH_ROUTES = {
 const routeMatchers: RouteMatcher[] = Object.entries(TWITCH_ROUTES).map(([name, route]) => {
     return {
         name,
-        regex: pathToRegexp(route)
+        regex: pathToRegexp(route).regexp
     };
 });
 
 routeMatchers.push(
     {
         name: 'channel',
-        regex: pathToRegexp('/:loginName'),
+        regex: pathToRegexp('/:loginName').regexp,
         matchState: state => state?.state?.channelView !== 'Home'
     }, 
     {
         name: 'channel-home',
-        regex: pathToRegexp('/:loginName'),
+        regex: pathToRegexp('/:loginName').regexp,
         matchState: state => state?.state?.channelView === 'Home'
     }
 );
