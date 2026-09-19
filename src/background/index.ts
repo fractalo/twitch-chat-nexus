@@ -4,15 +4,36 @@ import { setupDefaultChatFilters } from "./storageInitializers";
  * to bypass async loader of crxjs
  * https://github.com/crxjs/chrome-extension-tools/issues/391
  */
-chrome.scripting.registerContentScripts([
-    {
+const registerInterceptor = async() => {
+    const script: chrome.scripting.RegisteredContentScript = {
         id: "tcn_early_injector",
-        js: ['earlyInjector.js'],
+        js: ['scripts/interceptor.js'],
         matches: ["*://*.twitch.tv/*"],
+        excludeMatches: ["*://gql.twitch.tv/*", "*://passport.twitch.tv/*"],
         runAt: "document_start",
-        allFrames: true,
+        allFrames: false,
+        world: "MAIN",
+    };
+
+    const registered = await chrome.scripting.getRegisteredContentScripts({ ids: [script.id] });
+    const saveScript = () => registered.length
+        ? chrome.scripting.updateContentScripts([script])
+        : chrome.scripting.registerContentScripts([script]);
+
+    try {
+        await saveScript();
+    } catch (error) {
+        if (import.meta.env.VITE_BROWSER !== 'firefox') throw error;
+
+        // Firefox before 128 does not support the MAIN execution world.
+        console.warn('[TCN] MAIN world registration failed; using earlyInjector', error);
+        script.js = ['earlyInjector.js'];
+        delete script.world;
+        await saveScript();
     }
-]);
+};
+
+registerInterceptor().catch(console.error);
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (sender.id !== chrome.runtime.id) {
