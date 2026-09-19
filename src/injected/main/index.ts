@@ -32,12 +32,13 @@ import { waitForDOMReady } from 'src/util/waitForDOMReady';
         });
 
         Object.values(modulePaths)
-        .forEach(path => {
+        .forEach(async path => {
             try {
                 if (typeof path !== 'string') {
                     throw new Error('module path is not string');
                 }
-                import(/* @vite-ignore */ path);
+                const url = new URL(path, new URL('/', import.meta.url));
+                await import(/* @vite-ignore */ url.href);
             } catch (err) {
                 console.error(err);
             }
