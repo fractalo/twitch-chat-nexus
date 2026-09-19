@@ -2,7 +2,8 @@ import ChatIndicator from "./ChatIndicator.svelte";
 import liveChat from "../../elements/LiveChat";
 import type { Message } from "node_modules/ircv3/lib";
 import type { Ping, PrivMsg } from "./types";
-import { getChatClient } from "../../clients";
+import { getChatClient, getGqlClient } from "../../clients";
+import { isRecord } from "src/util/typePredicates";
 
 class ChatIndicatorManager {
     private rootEl: HTMLElement;
@@ -17,6 +18,7 @@ class ChatIndicatorManager {
 
         this.keepRootInserted();
         this.setupChatClientListeners();
+        this.setupGqlClientListeners();
     }
 
     private keepRootInserted() {
@@ -33,6 +35,23 @@ class ChatIndicatorManager {
         return message.tags.get('client-nonce');
     } 
 
+    private waitForMessage(nonce: string) {
+        if (this.latestPrivMsg?.nonce === nonce) return;
+        this.indicator.setState('waiting');
+        this.latestPrivMsg = { nonce, sentAt: Date.now() };
+    }
+
+    private async setupGqlClientListeners() {
+        const gqlClient = await getGqlClient();
+        gqlClient.setRequestHook('sendChatMessage', (request) => {
+            const input = request.variables?.input;
+            if (isRecord(input) && typeof input.nonce === 'string' && input.nonce) {
+                this.waitForMessage(input.nonce);
+            }
+            return { type: 'request', request };
+        });
+    }
+
     private async setupChatClientListeners() {
         const chatClient = await getChatClient();
 
@@ -41,8 +60,7 @@ class ChatIndicatorManager {
                 case 'PRIVMSG': {
                     const nonce = this.getClientNonce(message);
                     if (nonce) {
-                        this.indicator.setState('waiting');
-                        this.latestPrivMsg = { nonce, sentAt: Date.now() };
+                        this.waitForMessage(nonce);
                     } else {
                         this.indicator.setState('idle'); 
                     }
@@ -62,6 +80,7 @@ class ChatIndicatorManager {
 
         chatClient.on('receive', (message) => {
             switch (message.command) {
+                case 'PRIVMSG':
                 case 'USERSTATE': {
                     if (!this.latestPrivMsg) return;
                     const nonce = this.getClientNonce(message);
