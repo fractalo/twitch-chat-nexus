@@ -45,7 +45,9 @@ export default class ChatList {
             mutations.forEach((mutation) => {
                 mutation.addedNodes.forEach((node) => {
                     if (!(node instanceof Element)) return;
-                    this.emitter.emit('chat', node);
+                    
+                    const chatMessageEl = node.matches('.chat-line__message') ? node : node.querySelector('.chat-line__message');
+                    chatMessageEl && this.emitter.emit('chat', chatMessageEl);
                 });
             });
         });
