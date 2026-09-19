@@ -255,6 +255,10 @@
 
     onMount(() => {
         resizeObserver.observe(simplebarRootEl);
+        
+        scrollContentEl = simplebarRootEl;
+        scrollContentEl.addEventListener('scroll', handleScroll);
+
         waitForSelector(
             ".simplebar-scroll-content", 
             simplebarRootEl, 
