@@ -11,6 +11,7 @@
     import { chatLogStyleState, requestConfig } from './stores';
     import { i18n } from 'src/i18n';
     import type { GqlClient } from 'src/injected/interceptor/clients/GqlClient';
+    import { debugLog, debugWarn, debugFailure } from '../../../debug';
     import Dropdown from '../../components/Dropdown.svelte';
   import DropdownTooltipIconButton from '../../components/DropdownTooltipIconButton.svelte';
 
@@ -22,6 +23,7 @@
     let hasNeverTriggeredChatlogFetch = true;
 
     const triggerChatLogFetch = () => {
+        debugLog('ChatLogView', 'Triggering chat log refresh', { isPaginationEnabled });
         hasNeverTriggeredChatlogFetch = false;
         refreshMessagesTab();
     };
@@ -87,10 +89,12 @@
     };
 
     const checkHasMorePage = async(request: ModLogsMessagesGqlRequest, signal?: AbortSignal | null) => {
+        debugLog('ChatLogView', 'Checking for more messages');
         let response: GqlResponse;
         try {
             [response] = await gqlClient.fetchGqlData([request], { signal });
-        } catch {
+        } catch (error) {
+            debugFailure('ChatLogView', 'Additional page check failed; returning false', error);
             return false;
         }
 
@@ -109,6 +113,7 @@
             cursor: $requestConfig.cursor
         };
         const paginationDirection = $requestConfig.direction;
+        debugLog('ChatLogView', 'Custom chat lookup started', { pageSize: variables.first, hasCursor: !!variables.cursor, paginationDirection });
 
         const request = await createModLogsMessagesRequest(variables);
 
@@ -118,6 +123,7 @@
                 [response] = await gqlClient.fetchGqlData([request], { signal });
 
                 if (isPersistedQueryNotFound(response)) {
+                    debugLog('ChatLogView', 'Persisted query missing', { attempt: i + 1, willRetryWithQuery: i === 0 });
                     if (i >= 1) throw new Error(`PersistedQueryNotFound`);
                     request.query = modLogsMessagesQuery;
                 } else {
@@ -125,9 +131,7 @@
                 }
             }
         } catch (error) {
-            if (error instanceof Error && error.name !== 'AbortError') {
-                console.error(error.message);
-            }
+            debugFailure('ChatLogView', 'Custom lookup failed or aborted; returning empty response', error);
             return {};
         }
 
@@ -139,6 +143,7 @@
 
         if (isRecord(messages) && Array.isArray(messages.edges)) {
             const edges = filterEdges(messages.edges, variables);
+            debugLog('ChatLogView', 'Messages filtered', { received: messages.edges.length, retained: edges.length });
 
             let hasMorePage = Boolean(response?.data?.viewerCardModLogs?.messages?.pageInfo?.hasNextPage);
 
@@ -176,11 +181,14 @@
             }
             
             messages.edges = edges;
+            debugLog('ChatLogView', 'Pagination updated', { hasMorePage, hasNextCursor: !!nextPageCursor, previousCursorCount: prevPageCursors.length });
+        } else {
+            debugWarn('ChatLogView', 'Missing or unexpected viewerCardModLogs.messages.edges');
         }
 
         /* prevent infinite scrolling */
         if (!assignPropertyIfValid(response?.data?.viewerCardModLogs?.messages?.pageInfo, 'hasNextPage', false)) {
-            console.log(`could not modify hasNextPage of ${CHAT_LOG_OPERATION_NAME} response`);
+            debugWarn('ChatLogView', `Could not modify hasNextPage of ${CHAT_LOG_OPERATION_NAME} response`);
         }
 
         return response;
@@ -189,6 +197,7 @@
     let prevAbortController: AbortController | undefined;
 
     gqlClient.setRequestHook(CHAT_LOG_OPERATION_NAME, (request: GqlRequest) => {
+        debugLog('ChatLogView', 'Chat request hook entered', { operation: request.operationName, isPaginationEnabled, hasCursor: !!request.variables?.cursor, cancellingPrevious: !!prevAbortController });
         const abortController = new AbortController();
         prevAbortController?.abort();
         prevAbortController = abortController;
@@ -200,7 +209,7 @@
             typeof request.variables.channelID !== 'string' ||
             typeof request.variables.senderID !== 'string'
         ) {
-            console.warn(`[${CHAT_LOG_OPERATION_NAME}] unknown variables: ${request.variables}`);
+            debugWarn('ChatLogView', 'Unexpected variables; forwarding original query', { variableKeys: Object.keys(request.variables ?? {}) });
             return { type: "response", response: gqlClient.fetchGqlData([request], {signal: abortController.signal}).then(response => response[0]) };
         }
         
@@ -208,9 +217,11 @@
             request.variables.cursor ||
             !isPaginationEnabled
         ) {
+            debugLog('ChatLogView', 'Forwarding original query', { reason: request.variables.cursor ? 'Existing cursor' : 'Pagination disabled' });
             return { type: "response", response: gqlClient.fetchGqlData([request], {signal: abortController.signal}).then(response => response[0]) };
         }
 
+        debugLog('ChatLogView', 'Replacing original query with custom lookup');
         return { 
             type: "response", 
             response: fetchChatLog({

@@ -14,6 +14,23 @@ npm run postinstall
 npm run build
 ```
 
+## Debugging
+GQL and chat history diagnostics are disabled by default. To enable them, run this
+in the Twitch page console, then reload the page:
+
+```js
+localStorage.setItem('TCN_DEBUG', 'true');
+```
+
+Filter the console by `[TCN]`. To disable diagnostics again:
+
+```js
+localStorage.removeItem('TCN_DEBUG');
+```
+
+This setting is stored for the current Twitch origin and browser profile. No
+separate development build is required.
+
 ## Install
 [![Available in the Chrome Web Store](https://github-production-user-asset-6210df.s3.amazonaws.com/42487844/237139321-1569748d-9179-4bc8-93d0-332f7d3f8eb6.png)](https://chrome.google.com/webstore/detail/twitch-chat-nexus/oopcjaklhenijofoanbpchndknfadldn)
 
