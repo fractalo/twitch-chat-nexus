@@ -4,6 +4,7 @@
   import type { SeparatorState, Seperator } from './types';
   import { sineInOut } from 'svelte/easing';
   import { chatLogStyleState } from './stores';
+  import { debugLog } from '../../../debug';
 
 
   const TIMEOUT = 800;
@@ -62,13 +63,19 @@
   };
 
   const updateDateSeperators = () => {
-    if (!scrollContentEl?.firstElementChild?.firstElementChild) return;
+    const logListEl = scrollContentEl?.querySelector('.vcml-message')?.parentElement;
+    separatorObservers.forEach(observer => observer.disconnect());
+    currentDateSeparator = null;
+    separatorStates.clear();
+    separatorEls = [];
+    if (!logListEl) return;
 
-    const logEls = [...scrollContentEl.firstElementChild.firstElementChild.children] as HTMLElement[];
+    const logEls = [...logListEl.children] as HTMLElement[];
 
     separatorEls = logEls.filter((el) => {
-      return !el.querySelector('.message__timestamp,.message-author__username') && el.textContent;
+      return !el.matches('.vcml-message') && !!el.querySelector(':scope > p') && !!el.textContent?.trim();
     });
+    debugLog('ChatLogView/dateHeader', 'Date separators found', { count: separatorEls.length });
 
     // Return if no separators found
     if (!separatorEls.length) return;
@@ -128,7 +135,8 @@
     modLogsPageObserver?.disconnect();
 
     const handlePageRefresh = () => {
-      if (document.contains(scrollContentEl)) return;
+      const nextScrollContentEl = modLogsPageEl.querySelector<HTMLElement>('.scrollable-area, .simplebar-scroll-content');
+      if (nextScrollContentEl === scrollContentEl) return;
 
       if (scrollContentEl) {
         scrollContentEl.removeEventListener('scroll', scrollListener);
@@ -138,12 +146,12 @@
         currentDateSeparator = null;
       }
 
-      scrollContentEl = modLogsPageEl.querySelector<HTMLElement>(".simplebar-scroll-content");
+      scrollContentEl = nextScrollContentEl;
       if (scrollContentEl) {
         scrollContentEl.addEventListener('scroll', scrollListener);
+        debugLog('ChatLogView/dateHeader', 'Scroll listener attached');
 
-        scrollContentEl.firstElementChild?.firstElementChild && 
-        logObserver.observe(scrollContentEl.firstElementChild.firstElementChild, { childList: true });
+        logObserver.observe(scrollContentEl, { childList: true, subtree: true });
         updateDateSeperators();
 
       } else {
@@ -152,7 +160,7 @@
     };
 
     modLogsPageObserver = new MutationObserver(handlePageRefresh)
-    modLogsPageObserver.observe(modLogsPageEl, { childList: true });
+    modLogsPageObserver.observe(modLogsPageEl, { childList: true, subtree: true });
     handlePageRefresh();
   };
 
@@ -163,7 +171,8 @@
     if (!scrollContentEl || !currentDateSeparator) return;
 
     const headerOffset = 4;
-    const elementPosition = currentDateSeparator.element.offsetTop - headerOffset;
+    const elementPosition = scrollContentEl.scrollTop + currentDateSeparator.element.getBoundingClientRect().top
+      - scrollContentEl.getBoundingClientRect().top - scrollContentEl.clientTop - headerOffset;
 
     scrollContentEl.scrollTo({
       top: elementPosition,
