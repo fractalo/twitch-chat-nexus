@@ -59,7 +59,7 @@
           {$i18n.t('appNotice.highlight', { ns: 'mainApp' })}
         </div>
         <div class="font-semibold text-[1.4rem] mb-4">
-          {$i18n.t('appNotice.newFeature', { ns: 'mainApp' })} - {$i18n.t('filteredChatView._self', { ns: 'settings' })}
+          {$i18n.t('appNotice.title', { ns: 'mainApp' })}
         </div>
         <div class="flex flex-col gap-4">
           {#if Array.isArray(contents)}

@@ -1,15 +1,14 @@
 {
     "appNotice": {
-        "newFeature": "New Feature",
+        "title": "Bug Fixes",
         "openOptionsPage": "Open Options Page",
 
-        "highlight": "Twitch Chat History is now renamed to Twitch Chat Nexus.",
+        "highlight": "Fixed features that stopped working after changes to Twitch.",
 
         "contents": [
-            "Adds an area to the chat window where you can collect chats of interest. (If the feature is enabled on the options page)",
-            "Automatic area resizing is possible (automatically collapse when inactive for a period of time and expand again when active)",
-            "You can save the filtered chats as an image.",
-            "You can add and edit username / keyword / badge filters using the filter editor."
+            "You can now view your own chat history again.",
+            "Fixed missing chat delivery status indicators.",
+            "Fixed username and badge filters in the filtered chat view."
         ]
     },
 

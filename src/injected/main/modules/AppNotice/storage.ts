@@ -1,4 +1,4 @@
-export const CURRENT_NOTICE_ID: number = 1;
+export const CURRENT_NOTICE_ID: number = 2;
 
 const VIEWED_APP_NOTICE_ID_STORAGE_KEY = 'tcn_viewed_app_notice_id';
 
