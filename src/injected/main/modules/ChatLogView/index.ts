@@ -7,26 +7,32 @@ import messaging from "../../messaging";
 import { SCRIPT_IDS } from "src/messaging";
 import missingStyles from "./missingStyles.css?inline";
 import { injectInlineStyle } from "src/util/injectors";
+import { debugLog } from '../../../debug';
 
 class ChatLogViewManager {
     constructor() {
+        debugLog('ChatLogView/UI', 'Initializing manager');
         injectInlineStyle(missingStyles);
         this.initChatLogView();
         this.initStickyDateHeader();
     }
 
     private async initChatLogView() {
+        debugLog('ChatLogView/UI', 'Waiting for drawer tabs');
         const modDrawerTabsEl = await getDrawerTabsEl();
+        debugLog('ChatLogView/UI', 'Drawer tabs found', { count: modDrawerTabsEl.children.length });
 
         const rootEl = document.createElement('div');
         setDaisyUiTheme(rootEl);
 
         const modDrawerTabEls = [...modDrawerTabsEl.children] as HTMLElement[];
         const modDrawerTabBtnEls = modDrawerTabEls.map(el => el.querySelector<HTMLButtonElement | HTMLAnchorElement>('button,a'));
+        let restoreContent = () => {};
         
         modDrawerTabBtnEls.forEach((el, i) => {
             el?.addEventListener('click', (event) => {
                 if (!event.isTrusted) return;
+                restoreContent();
                 rootEl.style.display = (i === 0) ? 'block' : 'none';
             });
         });
@@ -63,6 +69,7 @@ class ChatLogViewManager {
                 message.content !== isModerator
             ) {
                 isModerator = message.content;
+                debugLog('ChatLogView/UI', 'Received changed permission state', { isModerator });
                 updateLayout();
             }
         });
@@ -76,17 +83,39 @@ class ChatLogViewManager {
         });
         
         const refreshMessagesTab = () => {
+            debugLog('ChatLogView/UI', 'Refreshing messages tab', { messagesButtonFound: !!modDrawerTabBtnEls[0], alternateButtonFound: !!modDrawerTabBtnEls[1] });
+            restoreContent();
+            const modLogsEl = modDrawerTabsEl.closest('.viewer-card-mod-logs');
+            modLogsEl?.classList.add('tcn-refreshing');
+            let frame = 0;
+            const showContent = () => {
+                clearTimeout(timeout);
+                cancelAnimationFrame(frame);
+                modLogsEl?.classList.remove('tcn-refreshing');
+            };
+            const timeout = setTimeout(showContent, 1000);
+            restoreContent = showContent;
             modDrawerTabBtnEls[1]?.click();
-            setTimeout(() => modDrawerTabBtnEls[0]?.click(), 10);
+            setTimeout(() => {
+                modDrawerTabBtnEls[0]?.click();
+                frame = requestAnimationFrame(() => {
+                    frame = requestAnimationFrame(showContent);
+                });
+            }, 10);
         };
 
+        debugLog('ChatLogView/UI', 'Waiting for GQL client');
         const gqlClient = await getGqlClient();
+        debugLog('ChatLogView/UI', 'GQL client acquired', { ready: gqlClient.isReady() });
 
         new ChatLogView({ target: rootEl, props: { refreshMessagesTab, gqlClient } });
+        debugLog('ChatLogView/UI', 'ChatLogView component mounted');
     }
 
     private async initStickyDateHeader() { 
+        debugLog('ChatLogView/UI', 'Waiting for mod logs element');
         const modLogsEl = await getModLogsEl();
+        debugLog('ChatLogView/UI', 'Mod logs element found');
 
         let modLogsPageEl: HTMLElement | null = null;
 
@@ -113,5 +142,6 @@ class ChatLogViewManager {
 }
 
 
+debugLog('ChatLogView/UI', 'Page eligibility', { isSelfViewerCard: isSelfViewerCardPage() });
 export default isSelfViewerCardPage() && new ChatLogViewManager();
 
