@@ -7,6 +7,7 @@ import { isRecord } from 'src/util/typePredicates';
 const chatLogPermissions = new Set([
     'moderation.user_chat_history:view',
     'moderation.vmcl.viewer_card.mod_logs:view',
+    'moderation.vmcl.user_account_age:view',
 ]);
 
 const modifyPermission: typeof assignPropertyIfValid = (target, property, value) => {
