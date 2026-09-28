@@ -48,8 +48,7 @@ class ChatIndicatorManager {
             if (isRecord(input) && typeof input.nonce === 'string' && input.nonce) {
                 this.waitForMessage(input.nonce);
             }
-            return { type: 'request', request };
-        });
+        }, { observeOnly: true });
     }
 
     private async setupChatClientListeners() {

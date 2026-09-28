@@ -24,7 +24,8 @@ export interface GqlClient {
     on<E extends keyof Events>(event: E, callback: Events[E]): void;
     fetchGqlData(data: GqlRequest[], options?: FetchOptions): Promise<GqlResponse[]>;
     isReady(): boolean;
-    setRequestHook(operationName: string, hook: GqlRequestHook): void;
+    setRequestHook(operationName: string, hook: GqlRequestHook, options?: { observeOnly?: false }): void;
+    setRequestHook(operationName: string, hook: (request: GqlRequest) => void, options: { observeOnly: true }): void;
     deleteRequestHook(operationName: string): void;
     setResponseHook(operationName: string, hook: GqlResponseHook): void;
     deleteResponseHook(operationName: string): void;
@@ -36,7 +37,7 @@ const createGqlClient = (): GqlClient => {
     const emitter = createNanoEvents<Events>();
     let requestInit: RequestInit | null = null;
 
-    const requestHooks = new Map<string, GqlRequestHook>();
+    const requestHooks = new Map<string, { hook: GqlRequestHook | ((request: GqlRequest) => void), observeOnly: boolean }>();
     const responseHooks = new Map<string, GqlResponseHook>();
 
 
@@ -61,7 +62,7 @@ const createGqlClient = (): GqlClient => {
         return requestInit;
     };
 
-    const fetchGql = async(data: GqlRequest[], options?: FetchOptions, parentId?: string, settings = requestInit) => {
+    const fetchGql = async(data: GqlRequest[], options?: FetchOptions, parentId?: string, settings = requestInit, batch = true) => {
         const scope = `${parentId ?? 'GQL/direct'}/network-${++sequence}`;
         const start = performance.now();
         debugLog(scope, 'Sending operations', { operations: data.map(item => item?.operationName), hasRequestSettings: !!settings, aborted: options?.signal?.aborted });
@@ -72,7 +73,7 @@ const createGqlClient = (): GqlClient => {
         try {
             const response = await originalFetch(API_URL, {
                 ...settings,
-                body: JSON.stringify(data),
+                body: JSON.stringify(batch ? data : data[0]),
                 signal: options?.signal
             });
             debugLog(scope, 'HTTP response', { status: response.status, ok: response.ok, elapsedMs: Math.round(performance.now() - start) });
@@ -99,13 +100,13 @@ const createGqlClient = (): GqlClient => {
         // Keep this request's settings even if another request updates the shared defaults.
         const originalRequestInit = setRequestInit(originalRequest);
 
-        const originalRequestData = await originalRequest.json().catch(error => { debugFailure(scope, 'Request JSON parsing failed', error); }) as GqlRequest | GqlRequest[];
+        const originalRequestData = await originalRequest.clone().json().catch(error => { debugFailure(scope, 'Request JSON parsing failed', error); }) as GqlRequest | GqlRequest[];
         if (
             !originalRequestData || 
             (Array.isArray(originalRequestData) && !originalRequestData.length)
         ) {
             debugLog(scope, 'Empty or invalid request body; forwarding original input');
-            return originalFetch(input, init);
+            return originalFetch(originalRequest);
         }
 
 
@@ -115,9 +116,10 @@ const createGqlClient = (): GqlClient => {
         const requestData: GqlRequest[] = [];
         const fakeResponses: FakeResponse[] = [];
         const localResponseHooks: LocalResponseHook[] = [];
+        let hasModifyingRequestHook = false;
 
         origianlRequestDataArray.forEach((request, i) => {
-            let requestHook: GqlRequestHook | undefined;
+            let requestHook: ReturnType<typeof requestHooks.get>;
             if (
                 !request.operationName || 
                 !(requestHook = requestHooks.get(request.operationName))
@@ -129,7 +131,14 @@ const createGqlClient = (): GqlClient => {
 
             try {
                 debugLog(scope, 'Request hook started', { index: i, operation: request.operationName });
-                const result = requestHook(request);
+                if (requestHook.observeOnly) {
+                    requestHook.hook(structuredClone(request));
+                    requestData.push(request);
+                    return;
+                }
+                hasModifyingRequestHook = true;
+                const result = requestHook.hook(request);
+                if (!result) throw new Error('Request hook returned no result');
                 debugLog(scope, 'Request hook completed', { index: i, operation: request.operationName, resultType: result.type });
                 switch (result.type) {
                     case 'request': {
@@ -167,21 +176,32 @@ const createGqlClient = (): GqlClient => {
                 ...outgoingHeaders.keys(),
             ]);
             debugLog(scope, 'Request reconstruction', JSON.stringify({
+                passthrough: !hasModifyingRequestHook,
                 operations: origianlRequestDataArray.map(request => request?.operationName),
                 requestHooks: origianlRequestDataArray.map(request => requestHooks.has(request?.operationName ?? '')),
                 responseHooks: origianlRequestDataArray.map(request => responseHooks.has(request?.operationName ?? '')),
                 originalBatch: Array.isArray(originalRequestData),
-                outgoingBatch: true,
+                outgoingBatch: Array.isArray(originalRequestData),
                 changedHeaderNames: [...headerNames].filter(name => originalRequest.headers.get(name) !== outgoingHeaders.get(name)),
-                urlChanged: originalRequest.url !== API_URL,
+                urlChanged: hasModifyingRequestHook && originalRequest.url !== API_URL,
                 fakeResponses: fakeResponses.length,
             }));
-            response = await fetchGql(requestData, { signal: originalRequest.signal }, scope, originalRequestInit);
+            response = hasModifyingRequestHook
+                ? await fetchGql(requestData, { signal: originalRequest.signal }, scope, originalRequestInit, Array.isArray(originalRequestData))
+                : await originalFetch(originalRequest);
         } catch (error) {
             return Promise.reject(error);
         }
 
-        const responseData = await response.clone().json().catch(error => { debugFailure(scope, 'Response JSON parsing failed', error); }) as GqlResponse[];
+        if (!fakeResponses.length && !localResponseHooks.length && !origianlRequestDataArray.some(request => responseHooks.has(request.operationName ?? ''))) {
+            debugLog(scope, 'Returning original response without hooks');
+            return response;
+        }
+
+        const networkResponseData = await response.clone().json().catch(error => { debugFailure(scope, 'Response JSON parsing failed', error); }) as GqlResponse | GqlResponse[];
+        const responseData = !Array.isArray(originalRequestData) && requestData.length && networkResponseData && typeof networkResponseData === 'object' && !Array.isArray(networkResponseData)
+            ? [networkResponseData]
+            : networkResponseData;
         debugLog(scope, 'Parsed response', JSON.stringify(summarizeResponse(responseData)));
         if (
             !responseData || 
@@ -273,9 +293,9 @@ const createGqlClient = (): GqlClient => {
 
     const isReady = () => !!requestInit;
 
-    const setRequestHook = (operationName: string, hook: GqlRequestHook) => {
+    const setRequestHook = (operationName: string, hook: GqlRequestHook | ((request: GqlRequest) => void), options?: { observeOnly?: boolean }) => {
         debugLog('GQL', 'Registering request hook', { operationName, replacing: requestHooks.has(operationName) });
-        requestHooks.set(operationName, hook);
+        requestHooks.set(operationName, { hook, observeOnly: options?.observeOnly ?? false });
     };
 
     const deleteRequestHook = (operationName: string) => {
