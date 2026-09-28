@@ -31,9 +31,9 @@ export const debugFailure = (scope: string, event: string, error: unknown) => {
 export const summarizeResponse = (value: unknown): unknown => {
     if (Array.isArray(value)) return value.map(summarizeResponse);
     if (!value || typeof value !== 'object') return { type: typeof value, isNull: value === null };
-    const response = value as { data?: Record<string, unknown>; errors?: { message?: string; path?: unknown }[] };
+    const response = value as { data?: Record<string, unknown>; errors?: { message?: string; path?: unknown; extensions?: { code?: unknown } }[] };
     return {
         dataKeys: response.data && typeof response.data === 'object' ? Object.keys(response.data) : [],
-        errors: Array.isArray(response.errors) ? response.errors.map(error => ({ message: error?.message, path: error?.path })) : [],
+        errors: Array.isArray(response.errors) ? response.errors.map(error => ({ message: error?.message, path: error?.path, code: error?.extensions?.code })) : [],
     };
 };

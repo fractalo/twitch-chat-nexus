@@ -58,19 +58,20 @@ const createGqlClient = (): GqlClient => {
             referrer: request.referrer,
             referrerPolicy: request.referrerPolicy
         };
+        return requestInit;
     };
 
-    const fetchGql = async(data: GqlRequest[], options?: FetchOptions, parentId?: string) => {
+    const fetchGql = async(data: GqlRequest[], options?: FetchOptions, parentId?: string, settings = requestInit) => {
         const scope = `${parentId ?? 'GQL/direct'}/network-${++sequence}`;
         const start = performance.now();
-        debugLog(scope, 'Sending operations', { operations: data.map(item => item?.operationName), hasRequestSettings: !!requestInit, aborted: options?.signal?.aborted });
+        debugLog(scope, 'Sending operations', { operations: data.map(item => item?.operationName), hasRequestSettings: !!settings, aborted: options?.signal?.aborted });
         if (!data.length) {
             debugLog(scope, 'No network operations; returning empty batch');
             return new Response(JSON.stringify([]));
         }
         try {
             const response = await originalFetch(API_URL, {
-                ...requestInit,
+                ...settings,
                 body: JSON.stringify(data),
                 signal: options?.signal
             });
@@ -95,7 +96,8 @@ const createGqlClient = (): GqlClient => {
         const scope = `GQL/request-${++sequence}`;
         debugLog(scope, 'Intercepted request', { inputType: input instanceof Request ? 'Request' : typeof input, method: originalRequest.method });
 
-        setRequestInit(originalRequest);
+        // Keep this request's settings even if another request updates the shared defaults.
+        const originalRequestInit = setRequestInit(originalRequest);
 
         const originalRequestData = await originalRequest.json().catch(error => { debugFailure(scope, 'Request JSON parsing failed', error); }) as GqlRequest | GqlRequest[];
         if (
@@ -158,13 +160,29 @@ const createGqlClient = (): GqlClient => {
 
         let response: Response;
         try {
-            response = await fetchGql(requestData, { signal: init?.signal }, scope);
+            // Compare settings without logging header values or request bodies.
+            const outgoingHeaders = new Headers(originalRequestInit.headers);
+            const headerNames = new Set([
+                ...originalRequest.headers.keys(),
+                ...outgoingHeaders.keys(),
+            ]);
+            debugLog(scope, 'Request reconstruction', JSON.stringify({
+                operations: origianlRequestDataArray.map(request => request?.operationName),
+                requestHooks: origianlRequestDataArray.map(request => requestHooks.has(request?.operationName ?? '')),
+                responseHooks: origianlRequestDataArray.map(request => responseHooks.has(request?.operationName ?? '')),
+                originalBatch: Array.isArray(originalRequestData),
+                outgoingBatch: true,
+                changedHeaderNames: [...headerNames].filter(name => originalRequest.headers.get(name) !== outgoingHeaders.get(name)),
+                urlChanged: originalRequest.url !== API_URL,
+                fakeResponses: fakeResponses.length,
+            }));
+            response = await fetchGql(requestData, { signal: originalRequest.signal }, scope, originalRequestInit);
         } catch (error) {
             return Promise.reject(error);
         }
 
         const responseData = await response.clone().json().catch(error => { debugFailure(scope, 'Response JSON parsing failed', error); }) as GqlResponse[];
-        debugLog(scope, 'Parsed response', summarizeResponse(responseData));
+        debugLog(scope, 'Parsed response', JSON.stringify(summarizeResponse(responseData)));
         if (
             !responseData || 
             !Array.isArray(responseData) ||
@@ -214,7 +232,17 @@ const createGqlClient = (): GqlClient => {
         );
 
         debugLog(scope, 'Returning reconstructed response', { count: responseData.length, batch: Array.isArray(originalRequestData) });
-        return new Response(JSON.stringify(Array.isArray(originalRequestData) ? responseData : responseData[0]));
+        const reconstructedResponse = new Response(JSON.stringify(Array.isArray(originalRequestData) ? responseData : responseData[0]));
+        debugLog(scope, 'Response reconstruction', JSON.stringify({
+            originalStatus: response.status,
+            returnedStatus: reconstructedResponse.status,
+            originalContentType: response.headers.get('content-type'),
+            returnedContentType: reconstructedResponse.headers.get('content-type'),
+            droppedHeaderNames: [...response.headers.keys()].filter(name => !reconstructedResponse.headers.has(name)),
+            originalType: response.type,
+            returnedType: reconstructedResponse.type,
+        }));
+        return reconstructedResponse;
     }
     debugLog('GQL', 'Fetch interceptor installed');
 
