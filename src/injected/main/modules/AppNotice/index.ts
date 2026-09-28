@@ -1,10 +1,11 @@
 import { setDaisyUiTheme } from "src/util/twitch";
-import { CURRENT_NOTICE_ID, getStoredViewedAppNoticeId, storeViewedAppNoticeId } from "./storage";
+import { CURRENT_NOTICE_ID, CURRENT_NOTICE_EXPIRES_AT, getStoredViewedAppNoticeId, storeViewedAppNoticeId } from "./storage";
 import AppNotice from "./AppNotice.svelte";
 
 class AppNoticeManager {
     constructor() {
         if (window.location.hostname !== 'www.twitch.tv') return;
+        if (Date.now() >= CURRENT_NOTICE_EXPIRES_AT) return;
         if (getStoredViewedAppNoticeId() >= CURRENT_NOTICE_ID) return;
 
         this.init();

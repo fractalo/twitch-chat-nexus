@@ -1,4 +1,6 @@
 export const CURRENT_NOTICE_ID: number = 2;
+// Update this deadline when publishing a new notice.
+export const CURRENT_NOTICE_EXPIRES_AT = Date.parse('2026-11-28T00:00:00+09:00');
 
 const VIEWED_APP_NOTICE_ID_STORAGE_KEY = 'tcn_viewed_app_notice_id';
 
