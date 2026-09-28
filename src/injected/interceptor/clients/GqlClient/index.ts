@@ -232,7 +232,11 @@ const createGqlClient = (): GqlClient => {
         );
 
         debugLog(scope, 'Returning reconstructed response', { count: responseData.length, batch: Array.isArray(originalRequestData) });
-        const reconstructedResponse = new Response(JSON.stringify(Array.isArray(originalRequestData) ? responseData : responseData[0]));
+        const reconstructedResponse = new Response(JSON.stringify(Array.isArray(originalRequestData) ? responseData : responseData[0]), {
+            status: response.status,
+            statusText: response.statusText,
+            headers: response.headers,
+        });
         debugLog(scope, 'Response reconstruction', JSON.stringify({
             originalStatus: response.status,
             returnedStatus: reconstructedResponse.status,
